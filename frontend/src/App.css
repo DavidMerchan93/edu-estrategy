@@ -3,7 +3,7 @@
 /* Centrado del contenido de pagina */
 body {
   margin: 0;
-  background-color: #0f172a; 
+  background-color: #0f172a;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -13,11 +13,11 @@ body {
 
 /* Diseño de la tarjeta*/
 .card {
-  background-color: #1e293b; 
+  background-color: #1e293b;
   padding: 40px;
   border-radius: 16px;
   width: 100%;
-  max-width: 450px; 
+  max-width: 450px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
   text-align: center;
 }
@@ -106,14 +106,16 @@ body {
   cursor: pointer;
 }
 
-.enlace:hover { color: #38bdf8; }
+.enlace:hover {
+  color: #38bdf8;
+}
 
 /* TARJETA REGISTRO (Para poner los datos en dos columnas) */
 
 /* Esto organiza los campos en parejas para que no sea mas organico el diseño*/
 .formulario-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr; 
+  grid-template-columns: 1fr 1fr;
   gap: 20px;
   text-align: left;
 }
@@ -123,6 +125,6 @@ body {
     */
 
 /* El correo y la clave no se dividan en dos columnas */
-.full-width { 
-  grid-column: span 2; 
+.full-width {
+  grid-column: span 2;
 }

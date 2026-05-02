@@ -11,8 +11,8 @@ function App() {
   return (
     <div className="App">
       {/* Se eliminó el nav para que los botones vivan dentro de cada tarjeta */}
-      {pantalla === 'login'     && <Login setPantalla={setPantalla} />}
-      {pantalla === 'registro'  && <Registro setPantalla={setPantalla} />}
+      {pantalla === 'login' && <Login setPantalla={setPantalla} />}
+      {pantalla === 'registro' && <Registro setPantalla={setPantalla} />}
       {pantalla === 'dashboard' && <Dashboard setPantalla={setPantalla} />}
     </div>
   );

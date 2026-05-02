@@ -5,11 +5,56 @@ import './Dashboard.css';
    DATOS DE PRUEBA
    ============================================================ */
 const asignaturasMock = [
-  { id: 1, nombre: 'Matemáticas', codigo: 'MAT', docente: 'Prof. García',   hitos: 3, nota: 3.9, tiempo: 30,  semestre: '2026-1' },
-  { id: 2, nombre: 'Inglés',      codigo: 'ING', docente: 'Prof. Williams', hitos: 5, nota: 4.5, tiempo: 120, semestre: '2026-1' },
-  { id: 3, nombre: 'Español',     codigo: 'ESP', docente: 'Prof. Torres',   hitos: 2, nota: 4.6, tiempo: 23,  semestre: '2026-1' },
-  { id: 4, nombre: 'Física',      codigo: 'FIS', docente: 'Prof. Ramírez',  hitos: 4, nota: 3.2, tiempo: 28,  semestre: '2026-1' },
-  { id: 5, nombre: 'Cálculo',     codigo: 'CAL', docente: 'Prof. Mora',     hitos: 6, nota: 2.7, tiempo: 13,  semestre: '2026-1' },
+  {
+    id: 1,
+    nombre: 'Matemáticas',
+    codigo: 'MAT',
+    docente: 'Prof. García',
+    hitos: 3,
+    nota: 3.9,
+    tiempo: 30,
+    semestre: '2026-1',
+  },
+  {
+    id: 2,
+    nombre: 'Inglés',
+    codigo: 'ING',
+    docente: 'Prof. Williams',
+    hitos: 5,
+    nota: 4.5,
+    tiempo: 120,
+    semestre: '2026-1',
+  },
+  {
+    id: 3,
+    nombre: 'Español',
+    codigo: 'ESP',
+    docente: 'Prof. Torres',
+    hitos: 2,
+    nota: 4.6,
+    tiempo: 23,
+    semestre: '2026-1',
+  },
+  {
+    id: 4,
+    nombre: 'Física',
+    codigo: 'FIS',
+    docente: 'Prof. Ramírez',
+    hitos: 4,
+    nota: 3.2,
+    tiempo: 28,
+    semestre: '2026-1',
+  },
+  {
+    id: 5,
+    nombre: 'Cálculo',
+    codigo: 'CAL',
+    docente: 'Prof. Mora',
+    hitos: 6,
+    nota: 2.7,
+    tiempo: 13,
+    semestre: '2026-1',
+  },
 ];
 
 /* Datos del usuario de sesión activa (mock hasta integrar autenticación) */
@@ -43,7 +88,6 @@ function Dashboard({ setPantalla }) {
     };
   }, []);
 
-
   /* ========================
      ESTADÍSTICAS CALCULADAS
      Se derivan de los datos para que se actualicen solos cuando llegue el backend
@@ -54,22 +98,25 @@ function Dashboard({ setPantalla }) {
 
   /* Promedio de todas las notas, redondeado a un decimal */
   const promedioGeneral = (
-    asignaturas.reduce((acumulado, a) => acumulado + a.nota, 0) / asignaturas.length
+    asignaturas.reduce((acumulado, a) => acumulado + a.nota, 0) /
+    asignaturas.length
   ).toFixed(1);
 
   /* Suma de horas invertidas en todas las asignaturas */
-  const tiempoTotal = asignaturas.reduce((acumulado, a) => acumulado + a.tiempo, 0);
-
+  const tiempoTotal = asignaturas.reduce(
+    (acumulado, a) => acumulado + a.tiempo,
+    0
+  );
 
   /* ========================
      LÓGICA DE BÚSQUEDA
      Filtra la tabla en tiempo real por nombre o código de asignatura
      ======================== */
-  const asignaturasFiltradas = asignaturas.filter(a =>
-    a.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-    a.codigo.toLowerCase().includes(busqueda.toLowerCase())
+  const asignaturasFiltradas = asignaturas.filter(
+    (a) =>
+      a.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+      a.codigo.toLowerCase().includes(busqueda.toLowerCase())
   );
-
 
   /* ========================
      LÓGICA DE LA GRÁFICA DE BARRAS (CSS puro)
@@ -77,14 +124,13 @@ function Dashboard({ setPantalla }) {
      ======================== */
 
   /* Valor máximo de tiempo para normalizar las barras azules */
-  const maxTiempo = Math.max(...asignaturas.map(a => a.tiempo));
+  const maxTiempo = Math.max(...asignaturas.map((a) => a.tiempo));
 
   /* Altura en px de la barra azul (tiempo), máximo visual: 140px */
   const alturaTiempo = (tiempo) => Math.round((tiempo / maxTiempo) * 140);
 
   /* Altura en px de la barra amarilla (nota sobre escala de 5.0), máximo visual: 140px */
   const alturaNota = (nota) => Math.round((nota / 5.0) * 140);
-
 
   /* ========================
      LÓGICA DE COLOR DE NOTA
@@ -96,13 +142,11 @@ function Dashboard({ setPantalla }) {
     return 'nota-rojo';
   };
 
-
   /* ========================
      RENDERIZADO
      ======================== */
   return (
     <div className="dashboard-pagina">
-
       {/* ---- BARRA DE NAVEGACIÓN SUPERIOR ---- */}
       <nav className="dashboard-nav">
         {/* Logo de la aplicación */}
@@ -120,18 +164,17 @@ function Dashboard({ setPantalla }) {
         </div>
       </nav>
 
-
       {/* ---- CONTENIDO PRINCIPAL ---- */}
       <main className="dashboard-contenido">
-
         {/* ==== TARJETAS DE ESTADÍSTICAS ==== */}
         <div className="fila-estadisticas">
-
           {/* Tarjeta: total de asignaturas */}
           <div className="tarjeta-stat">
             <div className="stat-etiqueta">ASIGNATURAS</div>
             <div className="stat-valor">{totalAsignaturas}</div>
-            <div className="stat-subtitulo">Semestre {usuarioMock.semestre}</div>
+            <div className="stat-subtitulo">
+              Semestre {usuarioMock.semestre}
+            </div>
           </div>
 
           {/* Tarjeta: promedio general (verde) */}
@@ -148,7 +191,6 @@ function Dashboard({ setPantalla }) {
             <div className="stat-subtitulo">Horas acumuladas</div>
           </div>
         </div>
-
 
         {/* ==== SECCIÓN: GRÁFICA DE BARRAS ==== */}
         <div className="tarjeta-seccion">
@@ -171,7 +213,7 @@ function Dashboard({ setPantalla }) {
 
           {/* Gráfica: un grupo de barras por asignatura */}
           <div className="grafica-barras">
-            {asignaturas.map(asignatura => (
+            {asignaturas.map((asignatura) => (
               <div key={asignatura.id} className="grafica-grupo">
                 {/* Par de barras: azul (tiempo) + amarilla (nota) */}
                 <div className="grafica-grupo-barras">
@@ -192,7 +234,6 @@ function Dashboard({ setPantalla }) {
             ))}
           </div>
         </div>
-
 
         {/* ==== SECCIÓN: TABLA DE ASIGNATURAS ==== */}
         <div className="tarjeta-seccion">
@@ -225,12 +266,14 @@ function Dashboard({ setPantalla }) {
               </tr>
             </thead>
             <tbody>
-              {asignaturasFiltradas.map(asignatura => (
+              {asignaturasFiltradas.map((asignatura) => (
                 <tr key={asignatura.id}>
                   {/* Nombre + badge del semestre */}
                   <td>
                     {asignatura.nombre}
-                    <span className="badge-semestre">{asignatura.semestre}</span>
+                    <span className="badge-semestre">
+                      {asignatura.semestre}
+                    </span>
                   </td>
 
                   {/* Nombre del docente */}
@@ -238,7 +281,9 @@ function Dashboard({ setPantalla }) {
 
                   {/* Cantidad de hitos con badge */}
                   <td>
-                    <span className="badge-hitos">{asignatura.hitos} hitos</span>
+                    <span className="badge-hitos">
+                      {asignatura.hitos} hitos
+                    </span>
                   </td>
 
                   {/* Nota con color según rendimiento */}
@@ -255,11 +300,20 @@ function Dashboard({ setPantalla }) {
                   <td>
                     <div className="acciones-grupo">
                       {/* Ver hitos de la asignatura */}
-                      <button className="btn-tabla" title="Ver hitos">≡</button>
+                      <button className="btn-tabla" title="Ver hitos">
+                        ≡
+                      </button>
                       {/* Editar asignatura */}
-                      <button className="btn-tabla" title="Editar asignatura">⚙</button>
+                      <button className="btn-tabla" title="Editar asignatura">
+                        ⚙
+                      </button>
                       {/* Eliminar asignatura */}
-                      <button className="btn-tabla eliminar" title="Eliminar asignatura">✕</button>
+                      <button
+                        className="btn-tabla eliminar"
+                        title="Eliminar asignatura"
+                      >
+                        ✕
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -269,12 +323,17 @@ function Dashboard({ setPantalla }) {
 
           {/* Mensaje cuando el buscador no encuentra resultados */}
           {asignaturasFiltradas.length === 0 && (
-            <p style={{ textAlign: 'center', color: '#64748b', padding: '24px 0' }}>
+            <p
+              style={{
+                textAlign: 'center',
+                color: '#64748b',
+                padding: '24px 0',
+              }}
+            >
               No se encontraron asignaturas que coincidan con "{busqueda}"
             </p>
           )}
         </div>
-
       </main>
     </div>
   );
