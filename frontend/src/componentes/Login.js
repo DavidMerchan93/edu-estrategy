@@ -1,30 +1,28 @@
 import React, { useState } from 'react';
+import { usuariosFake } from '../data/mockData';
 
-function Login({ setPantalla }) {
-  // guardar los datos diligenciados y recordar por el programa. para que el programa los recuerde
+function Login({ setPantalla, setUsuario }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  // Gestión del envío del formulario
-  const handleLogin = async (e) => {
-    e.preventDefault(); // Payload para evitar que recargue y borre datos.
-    const loginPayload = { email, password }; // encapsular datos para el envio al bakend
-
-    /* // CONEXIÓN CON EL BACKEND "PENDIENTE"
-    try {
-      const response = await fetch('URLSUPABASE', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(loginPayload)
-      });
-      const data = await response.json();
-    } catch (error) {
-      alert("Error al conectar con el servidor");
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const encontrado = usuariosFake.find(
+      (u) => u.correo === email && u.password === password
+    );
+    if (encontrado) {
+      setUsuario(encontrado);
+      setPantalla('dashboard');
+    } else {
+      setError('Correo o contraseña incorrectos.');
     }
-    */
+  };
 
-    // Navegar al dashboard una vez el login sea exitoso
-    setPantalla('dashboard');
+  const autocompletar = () => {
+    setEmail('estudiante@edu.com');
+    setPassword('123456');
+    setError('');
   };
 
   return (
@@ -46,7 +44,10 @@ function Login({ setPantalla }) {
             type="email"
             placeholder="usuario@correo.com"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setError('');
+            }}
             required
           />
         </div>
@@ -56,10 +57,14 @@ function Login({ setPantalla }) {
             type="password"
             placeholder="********"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setError('');
+            }}
             required
           />
         </div>
+        {error && <p className="error-mensaje">{error}</p>}
         <button type="submit" className="btn-submit">
           Acceder
         </button>
@@ -70,6 +75,19 @@ function Login({ setPantalla }) {
           ¿No tienes cuenta? Regístrate
         </span>
         <span className="enlace">¿Olvidó su contraseña?</span>
+      </div>
+
+      <div className="demo-caja">
+        <p className="demo-titulo">Credenciales de prueba</p>
+        <p className="demo-dato">
+          <span>estudiante@edu.com</span> / <span>123456</span>
+        </p>
+        <p className="demo-dato">
+          <span>maria@edu.com</span> / <span>123456</span>
+        </p>
+        <button className="demo-btn" type="button" onClick={autocompletar}>
+          Autocompletar primera cuenta
+        </button>
       </div>
     </div>
   );

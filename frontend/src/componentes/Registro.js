@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 
-function Registro({ setPantalla }) {
-  // guardar los datos del registro para que el programa los recuerde
+const obtenerIniciales = (nombre) => {
+  const partes = nombre.trim().split(' ').filter(Boolean);
+  if (partes.length >= 2) return (partes[0][0] + partes[1][0]).toUpperCase();
+  return partes[0].slice(0, 2).toUpperCase();
+};
+
+function Registro({ setPantalla, setUsuario }) {
   const [formData, setFormData] = useState({
     identificacion: '',
     nombre: '',
@@ -12,28 +17,54 @@ function Registro({ setPantalla }) {
     password: '',
     confirmar: '',
   });
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    setError('');
   };
 
-  // Gestión del envío del formulario de registro
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // Payload para evitar que recargue y borre datos.
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (formData.password !== formData.confirmar) {
+      setError('Las contraseñas no coinciden.');
+      return;
+    }
+    if (formData.password.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
+
+    const nuevoUsuario = {
+      id: Date.now(),
+      identificacion: formData.identificacion,
+      nombre: formData.nombre,
+      iniciales: obtenerIniciales(formData.nombre),
+      correo: formData.correo,
+      password: formData.password,
+      carrera: formData.carrera,
+      semestre: parseInt(formData.semestre, 10),
+      fechaIngreso: formData.fechaIngreso,
+      semestreActivo: '2026-1',
+    };
 
     /* // CONEXIÓN CON EL BACKEND "PENDIENTE"
     try {
       const response = await fetch('URL SUPABASE', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(nuevoUsuario)
       });
-      if (response.ok) alert("Registro exitoso");
+      if (response.ok) { ... }
     } catch (error) {
       alert("Error al registrarse");
     }
     */
+
+    setUsuario(nuevoUsuario);
+    setPantalla('dashboard');
   };
 
   return (
@@ -75,6 +106,8 @@ function Registro({ setPantalla }) {
           <input
             name="semestre"
             type="number"
+            min="1"
+            max="12"
             onChange={handleChange}
             required
           />
@@ -106,7 +139,7 @@ function Registro({ setPantalla }) {
             required
           />
         </div>
-
+        {error && <p className="error-mensaje">{error}</p>}
         <button type="submit" className="btn-submit">
           Finalizar Registro
         </button>
