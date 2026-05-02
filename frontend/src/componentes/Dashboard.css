@@ -111,10 +111,14 @@
 }
 
 /* Variante verde para el promedio */
-.stat-valor.verde  { color: #4ade80; }
+.stat-valor.verde {
+  color: #4ade80;
+}
 
 /* Variante azul para el tiempo */
-.stat-valor.azul   { color: #38bdf8; }
+.stat-valor.azul {
+  color: #38bdf8;
+}
 
 /* Texto descriptivo debajo del número */
 .stat-subtitulo {
@@ -160,7 +164,9 @@
   transition: background 0.2s;
 }
 
-.btn-accion:hover { background-color: #0ea5e9; }
+.btn-accion:hover {
+  background-color: #0ea5e9;
+}
 
 /* Leyenda de colores de la gráfica */
 .grafica-leyenda {
@@ -185,8 +191,12 @@
   border-radius: 50%;
 }
 
-.leyenda-punto.azul     { background-color: #38bdf8; }
-.leyenda-punto.amarillo { background-color: #eab308; }
+.leyenda-punto.azul {
+  background-color: #38bdf8;
+}
+.leyenda-punto.amarillo {
+  background-color: #eab308;
+}
 
 /* Contenedor principal de la gráfica, alineado en la base */
 .grafica-barras {
@@ -223,10 +233,17 @@
   min-height: 4px;
 }
 
-.barra:hover { opacity: 0.75; cursor: pointer; }
+.barra:hover {
+  opacity: 0.75;
+  cursor: pointer;
+}
 
-.barra.azul     { background-color: #38bdf8; }
-.barra.amarillo { background-color: #eab308; }
+.barra.azul {
+  background-color: #38bdf8;
+}
+.barra.amarillo {
+  background-color: #eab308;
+}
 
 /* Etiqueta con el código de la asignatura debajo de cada grupo */
 .grafica-etiqueta {
@@ -261,7 +278,9 @@
   box-shadow: 0 0 0 1px #38bdf8;
 }
 
-.buscador-input::placeholder { color: #475569; }
+.buscador-input::placeholder {
+  color: #475569;
+}
 
 /* Tabla de datos */
 .tabla {
@@ -290,10 +309,14 @@
   vertical-align: middle;
 }
 
-.tabla tr:last-child td { border-bottom: none; }
+.tabla tr:last-child td {
+  border-bottom: none;
+}
 
 /* Resaltado al pasar el cursor sobre una fila */
-.tabla tr:hover td { background-color: #263148; }
+.tabla tr:hover td {
+  background-color: #263148;
+}
 
 /* Badge del semestre junto al nombre de la asignatura */
 .badge-semestre {
@@ -318,9 +341,18 @@
 }
 
 /* Colores de la nota según el rendimiento */
-.nota-verde    { color: #4ade80; font-weight: bold; }
-.nota-amarillo { color: #eab308; font-weight: bold; }
-.nota-rojo     { color: #ef4444; font-weight: bold; }
+.nota-verde {
+  color: #4ade80;
+  font-weight: bold;
+}
+.nota-amarillo {
+  color: #eab308;
+  font-weight: bold;
+}
+.nota-rojo {
+  color: #ef4444;
+  font-weight: bold;
+}
 
 /* Grupo de botones de acción en cada fila */
 .acciones-grupo {
@@ -345,8 +377,18 @@
   padding: 0;
 }
 
-.btn-tabla:hover { background-color: #1e293b; color: white; }
+.btn-tabla:hover {
+  background-color: #1e293b;
+  color: white;
+}
 
 /* Variante roja para el botón de eliminar */
-.btn-tabla.eliminar { border-color: #7f1d1d; color: #ef4444; }
-.btn-tabla.eliminar:hover { background-color: #ef4444; color: white; border-color: #ef4444; }
+.btn-tabla.eliminar {
+  border-color: #7f1d1d;
+  color: #ef4444;
+}
+.btn-tabla.eliminar:hover {
+  background-color: #ef4444;
+  color: white;
+  border-color: #ef4444;
+}
