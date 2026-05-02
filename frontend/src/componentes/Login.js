@@ -22,6 +22,9 @@ function Login({ setPantalla }) {
       alert("Error al conectar con el servidor");
     }
     */
+
+    // Navegar al dashboard una vez el login sea exitoso
+    setPantalla('dashboard');
   };
 
   return (
