@@ -7,3 +7,6 @@ Proyecto académico desarrollado para la gestión de usuarios.
 
 ## Cambio
 Agregando funcionalidad de login,
+
+## PR real final
+Este cambio se realiza para generar la solicitud de extracción en el equipo.
