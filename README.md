@@ -6,4 +6,4 @@ Proyecto académico desarrollado para la gestión de usuarios.
 - Login de usuario implementado en backend.
 
 ## Cambio
-Agregando funcionalidad de login
+Agregando funcionalidad de login,
