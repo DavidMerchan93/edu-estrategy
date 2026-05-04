@@ -20,7 +20,9 @@ function Registro({ setPantalla }) {
 
   // Gestión del envío del formulario de registro
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Payload para evitar que recargue y borre datos.
+    e.preventDefault(); 
+    setPantalla('dashboard');
+    // Payload para evitar que recargue y borre datos.
     
     /* // CONEXIÓN CON EL BACKEND "PENDIENTE"
     try {

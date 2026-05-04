@@ -7,7 +7,9 @@ function Login({ setPantalla }) {
 
   // Gestión del envío del formulario
   const handleLogin = async (e) => {
-    e.preventDefault(); // Payload para evitar que recargue y borre datos.
+    e.preventDefault(); 
+    setPantalla('dashboard');
+    // Payload para evitar que recargue y borre datos.
     const loginPayload = { email, password }; // encapsular datos para el envio al bakend
     
     /* // CONEXIÓN CON EL BACKEND "PENDIENTE"
@@ -25,6 +27,7 @@ function Login({ setPantalla }) {
   };
 
   return (
+    <div className="login-container">
     <div className="card">
       <div className="nav-interna">
         <button className="btn-nav active">Iniciar Sesión</button>
@@ -62,6 +65,7 @@ function Login({ setPantalla }) {
         <span className="enlace" onClick={() => setPantalla('registro')}>¿No tienes cuenta? Regístrate</span>
         <span className="enlace">¿Olvidó su contraseña?</span>
       </div>
+    </div>
     </div>
   );
 }
