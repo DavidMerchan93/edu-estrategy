@@ -1,16 +1,16 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 function Registro({ setPantalla }) {
   // guardar los datos del registro para que el programa los recuerde
   const [formData, setFormData] = useState({
-    identificacion: "",
-    nombre: "",
-    correo: "",
-    carrera: "",
-    semestre: "",
-    fechaIngreso: "",
-    password: "",
-    confirmar: "",
+    identificacion: '',
+    nombre: '',
+    correo: '',
+    carrera: '',
+    semestre: '',
+    fechaIngreso: '',
+    password: '',
+    confirmar: '',
   });
 
   const handleChange = (e) => {
@@ -108,7 +108,7 @@ function Registro({ setPantalla }) {
       </form>
 
       <div className="footer-links">
-        <span className="enlace" onClick={() => setPantalla("login")}>
+        <span className="enlace" onClick={() => setPantalla('login')}>
           ¿Ya tienes cuenta? Inicia sesión
         </span>
       </div>
