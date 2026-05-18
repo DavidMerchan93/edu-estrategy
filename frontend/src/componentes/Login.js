@@ -27,12 +27,7 @@ function Login({ setPantalla, setUsuario }) {
 
   return (
     <div className="card">
-      <div className="nav-interna">
-        <button className="btn-nav active">Iniciar Sesión</button>
-        <button className="btn-nav" onClick={() => setPantalla('registro')}>
-          Registrarse
-        </button>
-      </div>
+      <div className="nav-interna"></div>
 
       <h2 className="titulo-logo">ESTRATEGIA EDUCATIVA</h2>
       <p className="subtitulo">Gestión de Rendimiento Académico</p>
