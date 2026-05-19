@@ -1,0 +1,30 @@
+{
+  "name": "backend-edustrategy",
+  "version": "1.0.0",
+  "description": "Backend EDU-STRATEGY con arquitectura monolítica modular",
+  "main": "servidor.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon servidor.js",
+    "start": "node servidor.js",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "nodemon": "^3.1.14",
+    "prettier": "^3.0.0"
+  }
+}
