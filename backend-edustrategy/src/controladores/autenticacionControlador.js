@@ -22,8 +22,8 @@ export const login = async (req, res) => {
   try {
     const data = await iniciarSesion(req.body);
 
-    res.json({
-      mensaje: 'Login exitoso',
+    res.status(200).json({
+      mensaje: 'Inicio de sesión exitoso',
       token: data.token,
       usuario: data.usuario,
     });
