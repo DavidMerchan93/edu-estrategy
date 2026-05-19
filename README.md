@@ -81,3 +81,7 @@ El backend se encuentra organizado de forma modular mediante:
 - controladores
 - servicios
 - middlewares
+
+## Seguridad
+
+El sistema implementa autenticación mediante JWT y cifrado de contraseñas utilizando bcrypt para proteger la información de los usuarios.
