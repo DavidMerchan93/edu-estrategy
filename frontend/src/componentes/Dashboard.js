@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
-import { asignaturasFake } from '../data/mockData';
+import { apiFetchDashboard } from '../services/api';
 
 function Dashboard({ setPantalla, usuario }) {
   const [busqueda, setBusqueda] = useState('');
-  const [asignaturas] = useState(asignaturasFake);
+  const [asignaturas, setAsignaturas] = useState([]);
+  const [cargando, setCargando] = useState(true);
 
   /* App.css pone body en display:flex para centrar las tarjetas de Login/Registro.
      El Dashboard es full-page y no debe heredar ese centrado. */
@@ -20,12 +21,27 @@ function Dashboard({ setPantalla, usuario }) {
     };
   }, []);
 
+  useEffect(() => {
+    const token = localStorage.getItem('edu_token');
+    if (!token) {
+      setPantalla('login');
+      return;
+    }
+    apiFetchDashboard(token)
+      .then((data) => setAsignaturas(data.asignaturas))
+      .catch(() => setPantalla('login'))
+      .finally(() => setCargando(false));
+  }, [setPantalla]);
+
   const totalAsignaturas = asignaturas.length;
 
-  const promedioGeneral = (
-    asignaturas.reduce((acumulado, a) => acumulado + a.nota, 0) /
-    asignaturas.length
-  ).toFixed(1);
+  const promedioGeneral =
+    asignaturas.length > 0
+      ? (
+          asignaturas.reduce((acumulado, a) => acumulado + a.nota, 0) /
+          asignaturas.length
+        ).toFixed(1)
+      : '0.0';
 
   const tiempoTotal = asignaturas.reduce(
     (acumulado, a) => acumulado + a.tiempo,
@@ -38,7 +54,8 @@ function Dashboard({ setPantalla, usuario }) {
       a.codigo.toLowerCase().includes(busqueda.toLowerCase())
   );
 
-  const maxTiempo = Math.max(...asignaturas.map((a) => a.tiempo));
+  const maxTiempo =
+    asignaturas.length > 0 ? Math.max(...asignaturas.map((a) => a.tiempo)) : 1;
   const alturaTiempo = (tiempo) => Math.round((tiempo / maxTiempo) * 140);
   const alturaNota = (nota) => Math.round((nota / 5.0) * 140);
 
@@ -51,6 +68,24 @@ function Dashboard({ setPantalla, usuario }) {
   const nombreUsuario = usuario?.nombre ?? 'Estudiante';
   const inicialesUsuario = usuario?.iniciales ?? '?';
   const semestreActivo = usuario?.semestreActivo ?? '2026-1';
+
+  if (cargando) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100vh',
+          color: '#94a3b8',
+          fontSize: '1rem',
+          background: '#0f172a',
+        }}
+      >
+        Cargando datos...
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-pagina">
@@ -67,7 +102,10 @@ function Dashboard({ setPantalla, usuario }) {
           <span className="nombre-usuario">{nombreUsuario}</span>
           <button
             className="btn-cerrar-sesion"
-            onClick={() => setPantalla('login')}
+            onClick={() => {
+              localStorage.removeItem('edu_token');
+              setPantalla('login');
+            }}
             title="Cerrar sesión"
           >
             Salir
