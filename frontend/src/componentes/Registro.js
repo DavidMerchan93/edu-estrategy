@@ -10,7 +10,7 @@ function Registro({ setPantalla }) {
     semestre: '',
     fechaIngreso: '',
     password: '',
-    confirmar: ''
+    confirmar: '',
   });
 
   const handleChange = (e) => {
@@ -21,7 +21,7 @@ function Registro({ setPantalla }) {
   // Gestión del envío del formulario de registro
   const handleSubmit = async (e) => {
     e.preventDefault(); // Payload para evitar que recargue y borre datos.
-    
+
     /* // CONEXIÓN CON EL BACKEND "PENDIENTE"
     try {
       const response = await fetch('URL SUPABASE', {
@@ -38,18 +38,20 @@ function Registro({ setPantalla }) {
 
   return (
     <div className="card">
-      <div className="nav-interna">
-        <button className="btn-nav" onClick={() => setPantalla('login')}>Iniciar Sesión</button>
-        <button className="btn-nav active">Registrarse</button>
-      </div>
+      <div className="nav-interna"></div>
 
       <h2 className="titulo-logo">ESTRATEGIA EDUCATIVA</h2>
       <p className="subtitulo">Registro de Estudiante</p>
-      
+
       <form className="formulario-grid" onSubmit={handleSubmit}>
         <div className="input-group">
           <label>IDENTIFICACIÓN</label>
-          <input name="identificacion" type="text" onChange={handleChange} required />
+          <input
+            name="identificacion"
+            type="text"
+            onChange={handleChange}
+            required
+          />
         </div>
         <div className="input-group">
           <label>NOMBRE COMPLETO</label>
@@ -65,26 +67,50 @@ function Registro({ setPantalla }) {
         </div>
         <div className="input-group">
           <label>SEMESTRE</label>
-          <input name="semestre" type="number" onChange={handleChange} required />
+          <input
+            name="semestre"
+            type="number"
+            onChange={handleChange}
+            required
+          />
         </div>
         <div className="input-group">
           <label>FECHA DE INGRESO</label>
-          <input name="fechaIngreso" type="date" onChange={handleChange} required />
+          <input
+            name="fechaIngreso"
+            type="date"
+            onChange={handleChange}
+            required
+          />
         </div>
         <div className="input-group">
           <label>CONTRASEÑA</label>
-          <input name="password" type="password" onChange={handleChange} required />
+          <input
+            name="password"
+            type="password"
+            onChange={handleChange}
+            required
+          />
         </div>
         <div className="input-group">
           <label>CONFIRMAR</label>
-          <input name="confirmar" type="password" onChange={handleChange} required />
+          <input
+            name="confirmar"
+            type="password"
+            onChange={handleChange}
+            required
+          />
         </div>
 
-        <button type="submit" className="btn-submit">Finalizar Registro</button>
+        <button type="submit" className="btn-submit">
+          Finalizar Registro
+        </button>
       </form>
 
       <div className="footer-links">
-        <span className="enlace" onClick={() => setPantalla('login')}>¿Ya tienes cuenta? Inicia sesión</span>
+        <span className="enlace" onClick={() => setPantalla('login')}>
+          ¿Ya tienes cuenta? Inicia sesión
+        </span>
       </div>
     </div>
   );
