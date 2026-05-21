@@ -1,7 +1,7 @@
-const BASE = process.env.REACT_APP_API_URL || 'http://localhost:4000/api';
+const BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 export async function apiLogin(email, password) {
-  const res = await fetch(`${BASE}/auth/login`, {
+  const res = await fetch(`${BASE}/autenticacion/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),

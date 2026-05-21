@@ -1,6 +1,6 @@
-const pool = require('../db/pool');
+import { pool } from '../configuracion/baseDatos.js';
 
-async function getAsignaturasPorSemestre(idSemestre) {
+export async function getAsignaturasPorSemestre(idSemestre) {
   const { rows } = await pool.query(
     `SELECT
        a.id_asignatura,
@@ -19,7 +19,7 @@ async function getAsignaturasPorSemestre(idSemestre) {
   return rows;
 }
 
-async function getSemestreActivo(idEstudiante) {
+export async function getSemestreActivo(idEstudiante) {
   const { rows } = await pool.query(
     `SELECT id_semestre, nombre FROM semestre
      WHERE id_estudiante = $1 AND activo = TRUE
@@ -28,5 +28,3 @@ async function getSemestreActivo(idEstudiante) {
   );
   return rows[0] || null;
 }
-
-module.exports = { getAsignaturasPorSemestre, getSemestreActivo };

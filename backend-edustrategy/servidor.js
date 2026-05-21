@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import saludRutas from './src/rutas/saludRutas.js';
 import autenticacionRutas from './src/rutas/autenticacionRutas.js';
 import usuarioRutas from './src/rutas/usuarioRutas.js';
+import dashboardRutas from './src/rutas/dashboardRutas.js';
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use('/api/salud', saludRutas);
 app.use('/api/autenticacion', autenticacionRutas);
 app.use('/api/usuario', usuarioRutas);
+app.use('/api/dashboard', dashboardRutas);
 
 const PORT = process.env.PORT || 5000;
 
