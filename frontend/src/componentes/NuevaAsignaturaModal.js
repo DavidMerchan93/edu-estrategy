@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 
 const SEMESTRES = ['2025-1', '2025-2', '2026-1', '2026-2', '2027-1', '2027-2'];
@@ -9,8 +9,20 @@ const INITIAL_FORM = {
   semestre: '2026-1',
 };
 
-function NuevaAsignaturaModal({ isOpen, onClose, onGuardar, loading }) {
+function NuevaAsignaturaModal({ isOpen, onClose, onGuardar, loading, asignaturaEditando }) {
   const [form, setForm] = useState(INITIAL_FORM);
+  useEffect(() => {
+  if (asignaturaEditando) {
+    setForm({
+      nombre: asignaturaEditando.nombre,
+      docente: asignaturaEditando.docente,
+      semestre: asignaturaEditando.semestre,
+    });
+  } else {
+    setForm(INITIAL_FORM);
+  }
+}, [asignaturaEditando, isOpen]);
+
   const [errors, setErrors] = useState({ nombre: '', docente: '' });
 
   if (!isOpen) return null;
@@ -62,7 +74,9 @@ function NuevaAsignaturaModal({ isOpen, onClose, onGuardar, loading }) {
       <div className="modal-container">
 
         <div className="modal-header">
-          <h2 className="modal-title">Nueva asignatura</h2>
+          <h2 className="modal-title">
+          {asignaturaEditando ? 'Editar asignatura' : 'Nueva asignatura'}
+          </h2>
           <button className="modal-close-btn" onClick={handleCancel}>×</button>
         </div>
 

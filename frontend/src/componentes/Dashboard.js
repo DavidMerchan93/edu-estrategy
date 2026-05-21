@@ -1,106 +1,283 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import './Dashboard.css';
+import { asignaturasFake } from '../data/mockData';
 import NuevaAsignaturaModal from './NuevaAsignaturaModal';
 
-function Dashboard({ setPantalla }) {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [asignaturas, setAsignaturas] = useState([]);
-  const [loading, setLoading] = useState(false);
 
-  const handleGuardar = (datos) => {
-    setLoading(true);
-    setTimeout(() => {
-      setAsignaturas((prev) => [...prev, { ...datos, id: Date.now() }]);
-      setLoading(false);
-      setModalOpen(false);
-    }, 600);
+function Dashboard({ setPantalla, usuario }) {
+  const [busqueda, setBusqueda] = useState('');
+  const [asignaturas, setAsignaturas] = useState(asignaturasFake);
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [asignaturaEditando, setAsignaturaEditando] = useState(null);
+
+  /* App.css pone body en display:flex para centrar las tarjetas de Login/Registro.
+     El Dashboard es full-page y no debe heredar ese centrado. */
+  useEffect(() => {
+    document.body.style.display = 'block';
+    document.body.style.alignItems = 'unset';
+    document.body.style.justifyContent = 'unset';
+
+    return () => {
+      document.body.style.display = 'flex';
+      document.body.style.alignItems = 'center';
+      document.body.style.justifyContent = 'center';
+    };
+  }, []);
+
+  const totalAsignaturas = asignaturas.length;
+
+  const promedioGeneral = (
+    asignaturas.reduce((acumulado, a) => acumulado + a.nota, 0) /
+    asignaturas.length
+  ).toFixed(1);
+
+  const tiempoTotal = asignaturas.reduce(
+    (acumulado, a) => acumulado + a.tiempo,
+    0
+  );
+
+  const asignaturasFiltradas = asignaturas.filter(
+    (a) =>
+      a.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+      a.codigo.toLowerCase().includes(busqueda.toLowerCase())
+  );
+
+  const maxTiempo = Math.max(...asignaturas.map((a) => a.tiempo));
+  const alturaTiempo = (tiempo) => Math.round((tiempo / maxTiempo) * 140);
+  const alturaNota = (nota) => Math.round((nota / 5.0) * 140);
+
+  const claseNota = (nota) => {
+    if (nota >= 4.0) return 'nota-verde';
+    if (nota >= 3.0) return 'nota-amarillo';
+    return 'nota-rojo';
   };
 
+  const nombreUsuario = usuario?.nombre ?? 'Estudiante';
+  const inicialesUsuario = usuario?.iniciales ?? '?';
+  const semestreActivo = usuario?.semestreActivo ?? '2026-1';
+
+  const handleAbrirCrear = () => {
+  setAsignaturaEditando(null);
+  setModalAbierto(true);
+  
+};
+
+const handleAbrirEditar = (asignatura) => {
+  setAsignaturaEditando(asignatura);
+  setModalAbierto(true);
+  
+};
+
+const handleGuardar = (datos) => {
+  if (asignaturaEditando) {
+    // EDITAR
+    setAsignaturas((prev) =>
+      prev.map((a) =>
+        a.id === asignaturaEditando.id ? { ...a, ...datos } : a
+    
+      )
+    );
+    alert('¡Asignatura actualizada correctamente ✍️!');
+  } else {
+    // CREAR
+    const nueva = {
+      id: Date.now(),
+      codigo: datos.nombre.slice(0, 3).toUpperCase(),
+      hitos: 0,
+      nota: 0,
+      tiempo: 0,
+      ...datos,
+    };
+    alert('¡Asignatura guardada correctamente ✅!');
+    setAsignaturas((prev) => [...prev, nueva]);
+  }
+  setModalAbierto(false);
+};
+
+const handleEliminar = (id) => {
+  if (window.confirm('¿Seguro que deseas eliminar esta asignatura 🗑️?')) {
+    setAsignaturas((prev) => prev.filter((a) => a.id !== id));
+  }
+};
   return (
-    <div className="dashboard-wrapper">
+    <div className="dashboard-pagina">
+      {/* ---- BARRA DE NAVEGACIÓN SUPERIOR ---- */}
+      <nav className="dashboard-nav">
+        <span className="nav-logo">EDU·STRATEGY</span>
 
-      {/* Sidebar */}
-      <aside className="sidebar">
-        <div className="sidebar-logo">EDU·STRATEGY</div>
-        <nav className="sidebar-nav">
-          <div className="nav-item active">
-            <span className="nav-icon">⊞</span> Dashboard
+        <span className="nav-badge-semestre">
+          Semestre {semestreActivo} · Activo
+        </span>
+
+        <div className="nav-usuario">
+          <div className="avatar">{inicialesUsuario}</div>
+          <span className="nombre-usuario">{nombreUsuario}</span>
+          <button
+            className="btn-cerrar-sesion"
+            onClick={() => setPantalla('login')}
+            title="Cerrar sesión"
+          >
+            Salir
+          </button>
+        </div>
+      </nav>
+
+      {/* ---- CONTENIDO PRINCIPAL ---- */}
+      <main className="dashboard-contenido">
+        {/* ==== TARJETAS DE ESTADÍSTICAS ==== */}
+        <div className="fila-estadisticas">
+          <div className="tarjeta-stat">
+            <div className="stat-etiqueta">ASIGNATURAS</div>
+            <div className="stat-valor">{totalAsignaturas}</div>
+            <div className="stat-subtitulo">Semestre {semestreActivo}</div>
           </div>
-          <div className="nav-item">
-            <span className="nav-icon">⚙</span> Ajustes
+
+          <div className="tarjeta-stat">
+            <div className="stat-etiqueta">PROMEDIO GENERAL</div>
+            <div className="stat-valor verde">{promedioGeneral}</div>
+            <div className="stat-subtitulo">Sobre 5.0</div>
           </div>
-        </nav>
-      </aside>
 
-      {/* Main */}
-      <div className="dashboard-main">
-
-        {/* Topbar */}
-        <header className="topbar">
-          <div className="semestre-badge">Semestre 2026-1 · Activo</div>
-          <div className="user-info">
-            <div className="avatar">AP</div>
-            <span>Nombre Estudiante</span>
+          <div className="tarjeta-stat">
+            <div className="stat-etiqueta">TIEMPO TOTAL</div>
+            <div className="stat-valor azul">{tiempoTotal}h</div>
+            <div className="stat-subtitulo">Horas acumuladas</div>
           </div>
-        </header>
+        </div>
 
-        {/* Contenido */}
-        <main className="dashboard-content">
-          {asignaturas.length === 0 ? (
+        {/* ==== SECCIÓN: GRÁFICA DE BARRAS ==== */}
+        <div className="tarjeta-seccion">
+          <div className="seccion-header">
+            <h2 className="seccion-titulo">Rendimiento por asignatura</h2>
+            <button className="btn-accion">+ Semestre</button>
+          </div>
 
-            /* Empty state */
-            <div className="empty-state">
-              <div className="empty-icon">📚</div>
-              <h2 className="empty-title">Sin asignaturas registradas</h2>
-              <p className="empty-desc">
-                Agrega tu primera asignatura para comenzar a realizar seguimiento de tu rendimiento académico.
-              </p>
-              <button className="btn-crear" onClick={() => setModalOpen(true)}>
-                + Crear primera asignatura
-              </button>
-            </div>
+          <div className="grafica-leyenda">
+            <span className="leyenda-item">
+              <span className="leyenda-punto azul"></span>
+              Tiempo invertido (h)
+            </span>
+            <span className="leyenda-item">
+              <span className="leyenda-punto amarillo"></span>
+              Nota obtenida
+            </span>
+          </div>
 
-          ) : (
-
-            /* Tabla con asignaturas */
-            <div className="tabla-wrapper">
-              <div className="tabla-header">
-                <h2>Asignaturas</h2>
-                <button className="btn-crear" onClick={() => setModalOpen(true)}>
-                  + Crear asignatura
-                </button>
+          <div className="grafica-barras">
+            {asignaturas.map((asignatura) => (
+              <div key={asignatura.id} className="grafica-grupo">
+                <div className="grafica-grupo-barras">
+                  <div
+                    className="barra azul"
+                    style={{ height: `${alturaTiempo(asignatura.tiempo)}px` }}
+                    title={`Tiempo: ${asignatura.tiempo}h`}
+                  ></div>
+                  <div
+                    className="barra amarillo"
+                    style={{ height: `${alturaNota(asignatura.nota)}px` }}
+                    title={`Nota: ${asignatura.nota}`}
+                  ></div>
+                </div>
+                <span className="grafica-etiqueta">{asignatura.codigo}</span>
               </div>
-              <table className="tabla">
-                <thead>
-                  <tr>
-                    <th>ASIGNATURA</th>
-                    <th>DOCENTE</th>
-                    <th>SEMESTRE</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {asignaturas.map((a) => (
-                    <tr key={a.id}>
-                      <td>{a.nombre}</td>
-                      <td>{a.docente}</td>
-                      <td>{a.semestre}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            ))}
+          </div>
+        </div>
 
+        {/* ==== SECCIÓN: TABLA DE ASIGNATURAS ==== */}
+        <div className="tarjeta-seccion">
+          <div className="seccion-header">
+            <h2 className="seccion-titulo">Asignaturas</h2>
+          </div>
+
+          <div className="tabla-header">
+            <input
+              className="buscador-input"
+              type="text"
+              placeholder="🔍︎ Buscar asignatura "
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+            />
+            <button className="btn-accion" onClick={handleAbrirCrear}>+ Crear asignatura</button>
+          </div>
+
+          <table className="tabla">
+            <thead>
+              <tr>
+                <th>ASIGNATURA</th>
+                <th>DOCENTE</th>
+                <th>HITOS</th>
+                <th>NOTA</th>
+                <th>TIEMPO</th>
+                <th>ACCIONES</th>
+              </tr>
+            </thead>
+            <tbody>
+              {asignaturasFiltradas.map((asignatura) => (
+                <tr key={asignatura.id}>
+                  <td>
+                    {asignatura.nombre}
+                    <span className="badge-semestre">
+                      {asignatura.semestre}
+                    </span>
+                  </td>
+                  <td>{asignatura.docente}</td>
+                  <td>
+                    <span className="badge-hitos">
+                      {asignatura.hitos} hitos
+                    </span>
+                  </td>
+                  <td>
+                    <span className={claseNota(asignatura.nota)}>
+                      {asignatura.nota.toFixed(1)}
+                    </span>
+                  </td>
+                  <td>{asignatura.tiempo}h</td>
+                  <td>
+                    <div className="acciones-grupo">
+                     <button className="btn-tabla" title="Editar asignatura"
+                      onClick={() => handleAbrirEditar(asignatura)}>
+                      🖊️
+                      </button>
+                      <button className="btn-tabla eliminar" title="Eliminar asignatura"
+                      onClick={() => handleEliminar(asignatura.id)}>
+                      ✕
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {asignaturasFiltradas.length === 0 && (
+            <p
+              style={{
+                textAlign: 'center',
+                color: '#64748b',
+                padding: '24px 0',
+              }}
+            >
+              No se encontraron asignaturas que coincidan con "{busqueda}"
+            </p>
           )}
-        </main>
-      </div>
-
-      {/* Modal */}
-      <NuevaAsignaturaModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onGuardar={handleGuardar}
-        loading={loading}
-      />
-
+          <NuevaAsignaturaModal
+          isOpen={modalAbierto}
+          onClose={() => setModalAbierto(false)}
+          onGuardar={(nuevaAsignatura) => {
+          setModalAbierto(false);
+          }}
+          loading={false}
+          />
+          <NuevaAsignaturaModal
+          isOpen={modalAbierto}
+          onClose={() => setModalAbierto(false)}
+          onGuardar={handleGuardar}
+          asignaturaEditando={asignaturaEditando}
+          loading={false}
+          />
+        </div>
+      </main>
     </div>
   );
 }
