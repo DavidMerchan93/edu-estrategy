@@ -9,7 +9,6 @@ function Dashboard({ setPantalla, usuario }) {
   const [semestre, setSemestre] = useState('');
   const [modalAbierto, setModalAbierto] = useState(false);
   const [asignaturaEditando, setAsignaturaEditando] = useState(null);
-  const [cargando, setCargando] = useState(true);
 
   /* App.css pone body en display:flex para centrar las tarjetas de Login/Registro.
      El Dashboard es full-page y no debe heredar ese centrado. */
@@ -36,8 +35,7 @@ function Dashboard({ setPantalla, usuario }) {
         setAsignaturas(data.asignaturas);
         setSemestre(data.semestreActivo);
       })
-      .catch(() => setPantalla('login'))
-      .finally(() => setCargando(false));
+      .catch(() => setPantalla('login'));
   }, [setPantalla]);
 
   const totalAsignaturas = asignaturas.length;
