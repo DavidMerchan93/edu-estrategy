@@ -1,10 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
-import { asignaturasFake } from '../data/mockData';
+import Perfil from './Perfil';
+import NuevaAsignaturaModal from './NuevaAsignaturaModal';
+import NuevoSemestreModal from './NuevoSemestreModal';
+import NuevoHitoModal from './NuevoHitoModal';
+import {
+  apiFetchDashboard,
+  apiCrearAsignatura,
+  apiActualizarAsignatura,
+  apiEliminarAsignatura,
+  apiCrearSemestre,
+} from '../services/api';
 
-function Dashboard({ setPantalla, usuario }) {
+function Dashboard({ setPantalla, usuario, setUsuario }) {
   const [busqueda, setBusqueda] = useState('');
-  const [asignaturas] = useState(asignaturasFake);
+  const [asignaturas, setAsignaturas] = useState([]);
+  const [semestre, setSemestre] = useState('');
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [semestreModalAbierto, setSemestreModalAbierto] = useState(false);
+  const [hitoModalAbierto, setHitoModalAbierto] = useState(false);
+  const [asignaturaSeleccionada, setAsignaturaSeleccionada] = useState(null);
+  const [asignaturaEditando, setAsignaturaEditando] = useState(null);
+  const [loadingModal, setLoadingModal] = useState(false);
+  const [vista, setVista] = useState('dashboard');
 
   /* App.css pone body en display:flex para centrar las tarjetas de Login/Registro.
      El Dashboard es full-page y no debe heredar ese centrado. */
@@ -20,12 +38,29 @@ function Dashboard({ setPantalla, usuario }) {
     };
   }, []);
 
+  useEffect(() => {
+    const token = localStorage.getItem('edu_token');
+    if (!token) {
+      setPantalla('login');
+      return;
+    }
+    apiFetchDashboard(token)
+      .then((data) => {
+        setAsignaturas(data.asignaturas);
+        setSemestre(data.semestreActivo);
+      })
+      .catch(() => setPantalla('login'));
+  }, [setPantalla]);
+
   const totalAsignaturas = asignaturas.length;
 
-  const promedioGeneral = (
-    asignaturas.reduce((acumulado, a) => acumulado + a.nota, 0) /
-    asignaturas.length
-  ).toFixed(1);
+  const promedioGeneral =
+    asignaturas.length > 0
+      ? (
+          asignaturas.reduce((acumulado, a) => acumulado + a.nota, 0) /
+          asignaturas.length
+        ).toFixed(1)
+      : '0.0';
 
   const tiempoTotal = asignaturas.reduce(
     (acumulado, a) => acumulado + a.tiempo,
@@ -38,7 +73,8 @@ function Dashboard({ setPantalla, usuario }) {
       a.codigo.toLowerCase().includes(busqueda.toLowerCase())
   );
 
-  const maxTiempo = Math.max(...asignaturas.map((a) => a.tiempo));
+  const maxTiempo =
+    asignaturas.length > 0 ? Math.max(...asignaturas.map((a) => a.tiempo)) : 1;
   const alturaTiempo = (tiempo) => Math.round((tiempo / maxTiempo) * 140);
   const alturaNota = (nota) => Math.round((nota / 5.0) * 140);
 
@@ -48,10 +84,127 @@ function Dashboard({ setPantalla, usuario }) {
     return 'nota-rojo';
   };
 
-  const nombreUsuario = usuario?.nombre ?? 'Estudiante';
-  const inicialesUsuario = usuario?.iniciales ?? '?';
-  const semestreActivo = usuario?.semestreActivo ?? '2026-1';
+  const nombreUsuario = usuario?.nombre_completo ?? 'Estudiante';
+  const inicialesUsuario = usuario?.nombre_completo
+    ? usuario.nombre_completo
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase()
+    : '?';
+  const semestreActivo = semestre || '2026-1';
 
+  const handleAbrirCrear = () => {
+    setAsignaturaEditando(null);
+    setModalAbierto(true);
+  };
+
+  const handleAbrirEditar = (asignatura) => {
+    setAsignaturaEditando(asignatura);
+    setModalAbierto(true);
+  };
+
+  const handleGuardar = async (datos) => {
+    setLoadingModal(true);
+    try {
+      if (asignaturaEditando) {
+        const actualizada = await apiActualizarAsignatura(
+          asignaturaEditando.id,
+          {
+            nombre: datos.nombre,
+            docente: datos.docente,
+          }
+        );
+        setAsignaturas((prev) =>
+          prev.map((a) =>
+            a.id === asignaturaEditando.id
+              ? {
+                  ...a,
+                  nombre: actualizada.nombre,
+                  codigo: actualizada.nombre.slice(0, 3).toUpperCase(),
+                  docente: actualizada.nombre_docente,
+                }
+              : a
+          )
+        );
+      } else {
+        const nueva = await apiCrearAsignatura({
+          nombre: datos.nombre,
+          docente: datos.docente,
+        });
+        setAsignaturas((prev) => [
+          ...prev,
+          {
+            id: nueva.id_asignatura,
+            nombre: nueva.nombre,
+            codigo: nueva.nombre.slice(0, 3).toUpperCase(),
+            docente: nueva.nombre_docente,
+            semestre: semestreActivo,
+            hitos: 0,
+            nota: 0,
+            tiempo: 0,
+          },
+        ]);
+      }
+      setModalAbierto(false);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setLoadingModal(false);
+    }
+  };
+
+  const handleEliminar = async (id) => {
+    if (!window.confirm('¿Seguro que deseas eliminar esta asignatura?')) return;
+    try {
+      await apiEliminarAsignatura(id);
+      setAsignaturas((prev) => prev.filter((a) => a.id !== id));
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const refreshDashboard = async () => {
+    const token = localStorage.getItem('edu_token');
+    const data = await apiFetchDashboard(token);
+    setAsignaturas(data.asignaturas);
+    setSemestre(data.semestreActivo);
+  };
+
+  const handleCrearSemestre = async (datos) => {
+    setLoadingModal(true);
+    try {
+      await apiCrearSemestre(datos);
+      setSemestreModalAbierto(false);
+      await refreshDashboard();
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setLoadingModal(false);
+    }
+  };
+
+  const handleIrAPerfil = () => {
+    setVista('perfil');
+  };
+
+  const handleVolverDashboard = () => {
+    setVista('dashboard');
+  };
+
+  const handleUsuarioActualizado = (actualizado) => {
+    setUsuario((prev) => ({ ...prev, ...actualizado }));
+  };
+
+  const handleAbrirHitos = (asignatura) => {
+    setAsignaturaSeleccionada(asignatura);
+    setHitoModalAbierto(true);
+  };
+
+  const handleHitoGuardado = async () => {
+    await refreshDashboard();
+  };
   return (
     <div className="dashboard-pagina">
       {/* ---- BARRA DE NAVEGACIÓN SUPERIOR ---- */}
@@ -63,11 +216,25 @@ function Dashboard({ setPantalla, usuario }) {
         </span>
 
         <div className="nav-usuario">
-          <div className="avatar">{inicialesUsuario}</div>
-          <span className="nombre-usuario">{nombreUsuario}</span>
+          <div
+            className="usuario-clickable"
+            onClick={handleIrAPerfil}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              cursor: 'pointer',
+            }}
+          >
+            <div className="avatar">{inicialesUsuario}</div>
+            <span className="nombre-usuario">{nombreUsuario}</span>
+          </div>
           <button
             className="btn-cerrar-sesion"
-            onClick={() => setPantalla('login')}
+            onClick={() => {
+              localStorage.removeItem('edu_token');
+              setPantalla('login');
+            }}
             title="Cerrar sesión"
           >
             Salir
@@ -75,151 +242,194 @@ function Dashboard({ setPantalla, usuario }) {
         </div>
       </nav>
 
-      {/* ---- CONTENIDO PRINCIPAL ---- */}
-      <main className="dashboard-contenido">
-        {/* ==== TARJETAS DE ESTADÍSTICAS ==== */}
-        <div className="fila-estadisticas">
-          <div className="tarjeta-stat">
-            <div className="stat-etiqueta">ASIGNATURAS</div>
-            <div className="stat-valor">{totalAsignaturas}</div>
-            <div className="stat-subtitulo">Semestre {semestreActivo}</div>
+      {vista === 'perfil' ? (
+        <Perfil
+          usuario={usuario}
+          onVolver={handleVolverDashboard}
+          onUsuarioActualizado={handleUsuarioActualizado}
+        />
+      ) : (
+        <main className="dashboard-contenido">
+          {/* ==== TARJETAS DE ESTADÍSTICAS ==== */}
+          <div className="fila-estadisticas">
+            <div className="tarjeta-stat">
+              <div className="stat-etiqueta">ASIGNATURAS</div>
+              <div className="stat-valor">{totalAsignaturas}</div>
+              <div className="stat-subtitulo">Semestre {semestreActivo}</div>
+            </div>
+
+            <div className="tarjeta-stat">
+              <div className="stat-etiqueta">PROMEDIO GENERAL</div>
+              <div className="stat-valor verde">{promedioGeneral}</div>
+              <div className="stat-subtitulo">Sobre 5.0</div>
+            </div>
+
+            <div className="tarjeta-stat">
+              <div className="stat-etiqueta">TIEMPO TOTAL</div>
+              <div className="stat-valor azul">{tiempoTotal}h</div>
+              <div className="stat-subtitulo">Horas acumuladas</div>
+            </div>
           </div>
 
-          <div className="tarjeta-stat">
-            <div className="stat-etiqueta">PROMEDIO GENERAL</div>
-            <div className="stat-valor verde">{promedioGeneral}</div>
-            <div className="stat-subtitulo">Sobre 5.0</div>
-          </div>
+          {/* ==== SECCIÓN: GRÁFICA DE BARRAS ==== */}
+          <div className="tarjeta-seccion">
+            <div className="seccion-header">
+              <h2 className="seccion-titulo">Rendimiento por asignatura</h2>
+              <button
+                className="btn-accion"
+                onClick={() => setSemestreModalAbierto(true)}
+              >
+                + Semestre
+              </button>
+            </div>
 
-          <div className="tarjeta-stat">
-            <div className="stat-etiqueta">TIEMPO TOTAL</div>
-            <div className="stat-valor azul">{tiempoTotal}h</div>
-            <div className="stat-subtitulo">Horas acumuladas</div>
-          </div>
-        </div>
+            <div className="grafica-leyenda">
+              <span className="leyenda-item">
+                <span className="leyenda-punto azul"></span>
+                Tiempo invertido (h)
+              </span>
+              <span className="leyenda-item">
+                <span className="leyenda-punto amarillo"></span>
+                Nota obtenida
+              </span>
+            </div>
 
-        {/* ==== SECCIÓN: GRÁFICA DE BARRAS ==== */}
-        <div className="tarjeta-seccion">
-          <div className="seccion-header">
-            <h2 className="seccion-titulo">Rendimiento por asignatura</h2>
-            <button className="btn-accion">+ Semestre</button>
-          </div>
-
-          <div className="grafica-leyenda">
-            <span className="leyenda-item">
-              <span className="leyenda-punto azul"></span>
-              Tiempo invertido (h)
-            </span>
-            <span className="leyenda-item">
-              <span className="leyenda-punto amarillo"></span>
-              Nota obtenida
-            </span>
-          </div>
-
-          <div className="grafica-barras">
-            {asignaturas.map((asignatura) => (
-              <div key={asignatura.id} className="grafica-grupo">
-                <div className="grafica-grupo-barras">
-                  <div
-                    className="barra azul"
-                    style={{ height: `${alturaTiempo(asignatura.tiempo)}px` }}
-                    title={`Tiempo: ${asignatura.tiempo}h`}
-                  ></div>
-                  <div
-                    className="barra amarillo"
-                    style={{ height: `${alturaNota(asignatura.nota)}px` }}
-                    title={`Nota: ${asignatura.nota}`}
-                  ></div>
+            <div className="grafica-barras">
+              {asignaturas.map((asignatura) => (
+                <div key={asignatura.id} className="grafica-grupo">
+                  <div className="grafica-grupo-barras">
+                    <div
+                      className="barra azul"
+                      style={{ height: `${alturaTiempo(asignatura.tiempo)}px` }}
+                      title={`Tiempo: ${asignatura.tiempo}h`}
+                    ></div>
+                    <div
+                      className="barra amarillo"
+                      style={{ height: `${alturaNota(asignatura.nota)}px` }}
+                      title={`Nota: ${asignatura.nota}`}
+                    ></div>
+                  </div>
+                  <span className="grafica-etiqueta">{asignatura.codigo}</span>
                 </div>
-                <span className="grafica-etiqueta">{asignatura.codigo}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ==== SECCIÓN: TABLA DE ASIGNATURAS ==== */}
-        <div className="tarjeta-seccion">
-          <div className="seccion-header">
-            <h2 className="seccion-titulo">Asignaturas</h2>
-          </div>
-
-          <div className="tabla-header">
-            <input
-              className="buscador-input"
-              type="text"
-              placeholder="Buscar asignatura..."
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-            />
-            <button className="btn-accion">+ Crear asignatura</button>
-          </div>
-
-          <table className="tabla">
-            <thead>
-              <tr>
-                <th>ASIGNATURA</th>
-                <th>DOCENTE</th>
-                <th>HITOS</th>
-                <th>NOTA</th>
-                <th>TIEMPO</th>
-                <th>ACCIONES</th>
-              </tr>
-            </thead>
-            <tbody>
-              {asignaturasFiltradas.map((asignatura) => (
-                <tr key={asignatura.id}>
-                  <td>
-                    {asignatura.nombre}
-                    <span className="badge-semestre">
-                      {asignatura.semestre}
-                    </span>
-                  </td>
-                  <td>{asignatura.docente}</td>
-                  <td>
-                    <span className="badge-hitos">
-                      {asignatura.hitos} hitos
-                    </span>
-                  </td>
-                  <td>
-                    <span className={claseNota(asignatura.nota)}>
-                      {asignatura.nota.toFixed(1)}
-                    </span>
-                  </td>
-                  <td>{asignatura.tiempo}h</td>
-                  <td>
-                    <div className="acciones-grupo">
-                      <button className="btn-tabla" title="Ver hitos">
-                        ≡
-                      </button>
-                      <button className="btn-tabla" title="Editar asignatura">
-                        ⚙
-                      </button>
-                      <button
-                        className="btn-tabla eliminar"
-                        title="Eliminar asignatura"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  </td>
-                </tr>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </div>
 
-          {asignaturasFiltradas.length === 0 && (
-            <p
-              style={{
-                textAlign: 'center',
-                color: '#64748b',
-                padding: '24px 0',
-              }}
-            >
-              No se encontraron asignaturas que coincidan con "{busqueda}"
-            </p>
-          )}
-        </div>
-      </main>
+          {/* ==== SECCIÓN: TABLA DE ASIGNATURAS ==== */}
+          <div className="tarjeta-seccion">
+            <div className="seccion-header">
+              <h2 className="seccion-titulo">Asignaturas</h2>
+            </div>
+
+            <div className="tabla-header">
+              <input
+                className="buscador-input"
+                type="text"
+                placeholder="🔍︎ Buscar asignatura "
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+              />
+              <button className="btn-accion" onClick={handleAbrirCrear}>
+                + Crear asignatura
+              </button>
+            </div>
+
+            <table className="tabla">
+              <thead>
+                <tr>
+                  <th>ASIGNATURA</th>
+                  <th>DOCENTE</th>
+                  <th>HITOS</th>
+                  <th>NOTA</th>
+                  <th>TIEMPO</th>
+                  <th>ACCIONES</th>
+                </tr>
+              </thead>
+              <tbody>
+                {asignaturasFiltradas.map((asignatura) => (
+                  <tr key={asignatura.id}>
+                    <td>
+                      {asignatura.nombre}
+                      <span className="badge-semestre">
+                        {asignatura.semestre}
+                      </span>
+                    </td>
+                    <td>{asignatura.docente}</td>
+                    <td>
+                      <span className="badge-hitos">
+                        {asignatura.hitos} hitos
+                      </span>
+                    </td>
+                    <td>
+                      <span className={claseNota(asignatura.nota)}>
+                        {asignatura.nota.toFixed(1)}
+                      </span>
+                    </td>
+                    <td>{asignatura.tiempo}h</td>
+                    <td>
+                      <div className="acciones-grupo">
+                        <button
+                          className="btn-tabla"
+                          title="Editar asignatura"
+                          onClick={() => handleAbrirEditar(asignatura)}
+                        >
+                          🖊️
+                        </button>
+                        <button
+                          className="btn-tabla"
+                          title="Ver hitos"
+                          onClick={() => handleAbrirHitos(asignatura)}
+                          style={{ borderColor: '#334155', fontSize: 11 }}
+                        >
+                          H
+                        </button>
+                        <button
+                          className="btn-tabla eliminar"
+                          title="Eliminar asignatura"
+                          onClick={() => handleEliminar(asignatura.id)}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {asignaturasFiltradas.length === 0 && (
+              <p
+                style={{
+                  textAlign: 'center',
+                  color: '#64748b',
+                  padding: '24px 0',
+                }}
+              >
+                No se encontraron asignaturas que coincidan con "{busqueda}"
+              </p>
+            )}
+            <NuevaAsignaturaModal
+              isOpen={modalAbierto}
+              onClose={() => setModalAbierto(false)}
+              onGuardar={handleGuardar}
+              asignaturaEditando={asignaturaEditando}
+              loading={loadingModal}
+            />
+            <NuevoSemestreModal
+              isOpen={semestreModalAbierto}
+              onClose={() => setSemestreModalAbierto(false)}
+              onGuardar={handleCrearSemestre}
+              loading={loadingModal}
+            />
+            <NuevoHitoModal
+              isOpen={hitoModalAbierto}
+              onClose={() => setHitoModalAbierto(false)}
+              asignatura={asignaturaSeleccionada}
+              onGuardar={handleHitoGuardado}
+            />
+          </div>
+        </main>
+      )}
     </div>
   );
 }

@@ -1,38 +1,47 @@
 import React, { useState } from 'react';
-import { usuariosFake } from '../data/mockData';
+import { apiLogin } from '../services/api';
 
 function Login({ setPantalla, setUsuario }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const encontrado = usuariosFake.find(
-      (u) => u.correo === email && u.password === password
-    );
-    if (encontrado) {
-      setUsuario(encontrado);
+    setLoading(true);
+    setError('');
+    try {
+      const { token, usuario } = await apiLogin(email, password);
+      localStorage.setItem('edu_token', token);
+      setUsuario(usuario);
       setPantalla('dashboard');
-    } else {
-      setError('Correo o contraseña incorrectos.');
+    } catch (err) {
+      setError(err.message || 'Error al iniciar sesión.');
+    } finally {
+      setLoading(false);
     }
   };
 
   const autocompletar = () => {
-    setEmail('estudiante@edu.com');
-    setPassword('123456');
+    setEmail('david@correo.edu.co');
+    setPassword('Admin2026');
     setError('');
   };
 
   return (
-    <div className="card">
-      <div className="nav-interna"></div>
-
+    <div
+      className="card"
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+    >
       <h2 className="titulo-logo">ESTRATEGIA EDUCATIVA</h2>
       <p className="subtitulo">Gestión de Rendimiento Académico</p>
 
-      <form className="formulario-grid" onSubmit={handleLogin}>
+      <form
+        className="formulario-grid"
+        onSubmit={handleLogin}
+        style={{ width: '100%' }}
+      >
         <div className="input-group full-width">
           <label>CORREO INSTITUCIONAL</label>
           <input
@@ -60,25 +69,25 @@ function Login({ setPantalla, setUsuario }) {
           />
         </div>
         {error && <p className="error-mensaje">{error}</p>}
-        <button type="submit" className="btn-submit">
-          Acceder
+        <button type="submit" className="btn-submit" disabled={loading}>
+          {loading ? 'Verificando...' : 'Acceder'}
         </button>
       </form>
 
-      <div className="footer-links">
+      <div className="footer-links" style={{ textAlign: 'center' }}>
         <span className="enlace" onClick={() => setPantalla('registro')}>
           ¿No tienes cuenta? Regístrate
         </span>
         <span className="enlace">¿Olvidó su contraseña?</span>
       </div>
 
-      <div className="demo-caja">
+      <div className="demo-caja" style={{ textAlign: 'center' }}>
         <p className="demo-titulo">Credenciales de prueba</p>
         <p className="demo-dato">
-          <span>estudiante@edu.com</span> / <span>123456</span>
+          <span>david@correo.edu.co</span> / <span>Admin2026</span>
         </p>
         <p className="demo-dato">
-          <span>maria@edu.com</span> / <span>123456</span>
+          <span>tatiana@correo.edu.co</span> / <span>Admin2026</span>
         </p>
         <button className="demo-btn" type="button" onClick={autocompletar}>
           Autocompletar primera cuenta
