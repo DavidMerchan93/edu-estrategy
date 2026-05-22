@@ -363,7 +363,7 @@
 /* Botón individual de acción (icono) */
 .btn-tabla {
   background-color: #0f172a;
-  border: 1px solid #334155;
+  border: 1px solid #65ab6a;
   border-radius: 6px;
   color: #94a3b8;
   width: 30px;
@@ -378,7 +378,7 @@
 }
 
 .btn-tabla:hover {
-  background-color: #1e293b;
+  background-color: #58a24d;
   color: white;
 }
 

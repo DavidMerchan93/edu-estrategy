@@ -30,6 +30,7 @@ function Login({ setPantalla, setUsuario }) {
   };
 
   return (
+    <div className="login-container">
     <div className="card">
       <div className="nav-interna"></div>
 
@@ -88,6 +89,7 @@ function Login({ setPantalla, setUsuario }) {
           Autocompletar primera cuenta
         </button>
       </div>
+    </div>
     </div>
   );
 }
