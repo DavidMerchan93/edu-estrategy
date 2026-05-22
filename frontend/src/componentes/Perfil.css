@@ -57,6 +57,44 @@
   margin: 0;
 }
 
+.perfil-estado {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 0;
+  margin-bottom: 8px;
+  background-color: #0f172a;
+  border-radius: 10px;
+  border: 1px solid #334155;
+  flex-wrap: wrap;
+}
+
+.perfil-estado-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #cbd5e1;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.perfil-estado-indicador {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #4ade80;
+  box-shadow: 0 0 6px rgba(74, 222, 128, 0.5);
+}
+
+.perfil-estado-label {
+  color: #64748b;
+  font-size: 11px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
 .perfil-cuerpo {
   display: flex;
   flex-direction: column;

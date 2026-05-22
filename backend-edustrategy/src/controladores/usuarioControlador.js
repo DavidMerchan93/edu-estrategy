@@ -75,7 +75,7 @@ export const obtenerPerfil = async (req, res) => {
     const id = req.usuario.id_estudiante;
 
     const resultado = await pool.query(
-      `SELECT e.nombre_completo, e.carrera, e.semestre_actual, e.foto_url, c.email, c.verificado
+      `SELECT e.nombre_completo, e.carrera, e.semestre_actual, e.foto_url, e.fecha_ingreso, c.email, c.verificado
        FROM estudiante e
        JOIN credencial c ON e.id_credencial = c.id_credencial
        WHERE e.id_estudiante = $1`,

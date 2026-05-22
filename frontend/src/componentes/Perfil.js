@@ -163,6 +163,29 @@ function Perfil({ usuario, onVolver, onUsuarioActualizado }) {
             </div>
           )}
 
+          <div className="perfil-estado">
+            <div className="perfil-estado-item">
+              <span className="perfil-estado-indicador" />
+              <span>Activo</span>
+            </div>
+            <div className="perfil-estado-item">
+              <span>📚</span>
+              <span>Estudiando</span>
+            </div>
+            <div className="perfil-estado-item">
+              <span className="perfil-estado-label">Fecha de ingreso:</span>
+              <span>
+                {usuario?.fecha_ingreso
+                  ? new Date(usuario.fecha_ingreso).toLocaleDateString('es-ES', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })
+                  : '—'}
+              </span>
+            </div>
+          </div>
+
           <form className="perfil-cuerpo" onSubmit={handleGuardar}>
             <div className="perfil-grid">
               <div className="perfil-campo">
