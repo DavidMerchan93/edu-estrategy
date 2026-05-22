@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
 import { asignaturasFake } from '../data/mockData';
 import NuevaAsignaturaModal from './NuevaAsignaturaModal';
+import { apiFetchDashboard } from '../services/api';
 
 
 function Dashboard({ setPantalla, usuario }) {
@@ -9,6 +10,7 @@ function Dashboard({ setPantalla, usuario }) {
   const [asignaturas, setAsignaturas] = useState(asignaturasFake);
   const [modalAbierto, setModalAbierto] = useState(false);
   const [asignaturaEditando, setAsignaturaEditando] = useState(null);
+  const [cargando, setCargando] = useState(true);
 
   /* App.css pone body en display:flex para centrar las tarjetas de Login/Registro.
      El Dashboard es full-page y no debe heredar ese centrado. */
@@ -24,12 +26,27 @@ function Dashboard({ setPantalla, usuario }) {
     };
   }, []);
 
+  useEffect(() => {
+    const token = localStorage.getItem('edu_token');
+    if (!token) {
+      setPantalla('login');
+      return;
+    }
+    apiFetchDashboard(token)
+      .then((data) => setAsignaturas(data.asignaturas))
+      .catch(() => setPantalla('login'))
+      .finally(() => setCargando(false));
+  }, [setPantalla]);
+
   const totalAsignaturas = asignaturas.length;
 
-  const promedioGeneral = (
-    asignaturas.reduce((acumulado, a) => acumulado + a.nota, 0) /
-    asignaturas.length
-  ).toFixed(1);
+  const promedioGeneral =
+    asignaturas.length > 0
+      ? (
+          asignaturas.reduce((acumulado, a) => acumulado + a.nota, 0) /
+          asignaturas.length
+        ).toFixed(1)
+      : '0.0';
 
   const tiempoTotal = asignaturas.reduce(
     (acumulado, a) => acumulado + a.tiempo,
@@ -42,7 +59,8 @@ function Dashboard({ setPantalla, usuario }) {
       a.codigo.toLowerCase().includes(busqueda.toLowerCase())
   );
 
-  const maxTiempo = Math.max(...asignaturas.map((a) => a.tiempo));
+  const maxTiempo =
+    asignaturas.length > 0 ? Math.max(...asignaturas.map((a) => a.tiempo)) : 1;
   const alturaTiempo = (tiempo) => Math.round((tiempo / maxTiempo) * 140);
   const alturaNota = (nota) => Math.round((nota / 5.0) * 140);
 
@@ -114,7 +132,10 @@ const handleEliminar = (id) => {
           <span className="nombre-usuario">{nombreUsuario}</span>
           <button
             className="btn-cerrar-sesion"
-            onClick={() => setPantalla('login')}
+            onClick={() => {
+              localStorage.removeItem('edu_token');
+              setPantalla('login');
+            }}
             title="Cerrar sesión"
           >
             Salir
