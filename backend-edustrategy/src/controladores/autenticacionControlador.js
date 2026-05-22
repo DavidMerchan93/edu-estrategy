@@ -3,6 +3,49 @@ import {
   iniciarSesion,
 } from '../servicios/autenticacionServicio.js';
 
+/**
+ * @openapi
+ * /api/autenticacion/registro:
+ *   post:
+ *     tags:
+ *       - Autenticación
+ *     summary: Registra un nuevo usuario
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/RegistroRequest'
+ *     responses:
+ *       201:
+ *         description: Usuario registrado correctamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 mensaje:
+ *                   type: string
+ *                   example: Usuario registrado correctamente
+ *                 usuario:
+ *                   $ref: '#/components/schemas/Usuario'
+ *       400:
+ *         description: Campos obligatorios faltantes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               mensaje: Todos los campos son obligatorios
+ *       409:
+ *         description: El correo ya está registrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               mensaje: El correo ya está registrado
+ */
 export const registro = async (req, res) => {
   try {
     const usuario = await registrarUsuario(req.body);
@@ -19,6 +62,60 @@ export const registro = async (req, res) => {
   }
 };
 
+/**
+ * @openapi
+ * /api/autenticacion/login:
+ *   post:
+ *     tags:
+ *       - Autenticación
+ *     summary: Inicia sesión y obtiene un token JWT
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/LoginRequest'
+ *     responses:
+ *       200:
+ *         description: Inicio de sesión exitoso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 mensaje:
+ *                   type: string
+ *                   example: Inicio de sesión exitoso
+ *                 token:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIs...
+ *                 usuario:
+ *                   $ref: '#/components/schemas/Usuario'
+ *       400:
+ *         description: Correo y contraseña obligatorios
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               mensaje: Correo y contraseña obligatorios
+ *       401:
+ *         description: Credenciales inválidas
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               mensaje: Credenciales inválidas
+ *       403:
+ *         description: Usuario bloqueado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               mensaje: Usuario bloqueado
+ */
 export const login = async (req, res) => {
   try {
     const data = await iniciarSesion(req.body);
