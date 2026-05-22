@@ -1,5 +1,27 @@
 import { pool } from '../configuracion/baseDatos.js';
 
+/**
+ * @openapi
+ * /api/salud:
+ *   get:
+ *     tags:
+ *       - Salud
+ *     summary: Verifica que el servidor esté funcionando
+ *     responses:
+ *       200:
+ *         description: Servidor funcionando correctamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 estado:
+ *                   type: string
+ *                   example: OK
+ *                 mensaje:
+ *                   type: string
+ *                   example: Servidor EDU-STRATEGY funcionando correctamente
+ */
 export const verificarServidor = (req, res) => {
   res.json({
     estado: 'OK',
@@ -7,6 +29,41 @@ export const verificarServidor = (req, res) => {
   });
 };
 
+/**
+ * @openapi
+ * /api/salud/base-datos:
+ *   get:
+ *     tags:
+ *       - Salud
+ *     summary: Verifica la conexión a la base de datos PostgreSQL
+ *     responses:
+ *       200:
+ *         description: Conexión exitosa a PostgreSQL
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 estado:
+ *                   type: string
+ *                   example: OK
+ *                 mensaje:
+ *                   type: string
+ *                   example: Conexión exitosa a PostgreSQL
+ *                 fechaServidor:
+ *                   type: string
+ *                   format: date-time
+ *       500:
+ *         description: Error de conexión
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               estado: ERROR
+ *               mensaje: Error al conectar con PostgreSQL
+ *               detalle: Connection refused
+ */
 export const verificarBaseDatos = async (req, res) => {
   try {
     const resultado = await pool.query('SELECT NOW()');
