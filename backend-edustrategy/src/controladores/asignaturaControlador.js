@@ -5,41 +5,6 @@ import {
   eliminarAsignaturaDB,
 } from '../consultas/asignaturaConsultas.js';
 
-/**
- * @openapi
- * /api/asignaturas:
- *   post:
- *     tags:
- *       - Asignaturas
- *     summary: Crea una nueva asignatura en el semestre activo
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/CrearAsignaturaRequest'
- *     responses:
- *       201:
- *         description: Asignatura creada correctamente
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 mensaje:
- *                   type: string
- *                   example: Asignatura creada correctamente
- *                 asignatura:
- *                   $ref: '#/components/schemas/Asignatura'
- *       400:
- *         description: Nombre y docente son obligatorios
- *       401:
- *         description: Token requerido o inválido
- *       404:
- *         description: No tienes un semestre activo
- */
 export const crearAsignatura = async (req, res) => {
   try {
     const { id_estudiante } = req.usuario;
@@ -72,38 +37,6 @@ export const crearAsignatura = async (req, res) => {
   }
 };
 
-/**
- * @openapi
- * /api/asignaturas/{id}:
- *   put:
- *     tags:
- *       - Asignaturas
- *     summary: Actualiza una asignatura existente
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID de la asignatura
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/CrearAsignaturaRequest'
- *     responses:
- *       200:
- *         description: Asignatura actualizada correctamente
- *       400:
- *         description: Nombre y docente son obligatorios
- *       401:
- *         description: Token requerido o inválido
- *       404:
- *         description: Asignatura no encontrada
- */
 export const actualizarAsignatura = async (req, res) => {
   try {
     const { id_estudiante } = req.usuario;
@@ -137,30 +70,6 @@ export const actualizarAsignatura = async (req, res) => {
   }
 };
 
-/**
- * @openapi
- * /api/asignaturas/{id}:
- *   delete:
- *     tags:
- *       - Asignaturas
- *     summary: Elimina una asignatura
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID de la asignatura
- *     responses:
- *       200:
- *         description: Asignatura eliminada correctamente
- *       401:
- *         description: Token requerido o inválido
- *       404:
- *         description: Asignatura no encontrada
- */
 export const eliminarAsignatura = async (req, res) => {
   try {
     const { id_estudiante } = req.usuario;

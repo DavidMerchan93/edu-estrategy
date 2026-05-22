@@ -6,25 +6,6 @@ import {
   eliminarHitoDB,
 } from '../consultas/hitoConsultas.js';
 
-/**
- * @openapi
- * /api/hitos/tipos:
- *   get:
- *     tags:
- *       - Hitos
- *     summary: Obtiene los tipos de actividad disponibles
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: Lista de tipos de actividad
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/TipoActividad'
- */
 export const getTiposActividad = async (req, res) => {
   try {
     const tipos = await listarTiposActividad();
@@ -35,34 +16,6 @@ export const getTiposActividad = async (req, res) => {
   }
 };
 
-/**
- * @openapi
- * /api/hitos/{idAsignatura}:
- *   get:
- *     tags:
- *       - Hitos
- *     summary: Obtiene los hitos de una asignatura
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: idAsignatura
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID de la asignatura
- *     responses:
- *       200:
- *         description: Lista de hitos
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Hito'
- *       401:
- *         description: Token requerido o inválido
- */
 export const listarHitos = async (req, res) => {
   try {
     const { id_estudiante } = req.usuario;
@@ -76,38 +29,6 @@ export const listarHitos = async (req, res) => {
   }
 };
 
-/**
- * @openapi
- * /api/hitos/{idAsignatura}:
- *   post:
- *     tags:
- *       - Hitos
- *     summary: Crea un nuevo hito en una asignatura
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: idAsignatura
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID de la asignatura
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/CrearHitoRequest'
- *     responses:
- *       201:
- *         description: Hito creado correctamente
- *       400:
- *         description: Validación de campos fallida
- *       401:
- *         description: Token requerido o inválido
- *       404:
- *         description: Asignatura no encontrada
- */
 export const crearHito = async (req, res) => {
   try {
     const { id_estudiante } = req.usuario;
@@ -157,38 +78,6 @@ export const crearHito = async (req, res) => {
   }
 };
 
-/**
- * @openapi
- * /api/hitos/{idHito}:
- *   put:
- *     tags:
- *       - Hitos
- *     summary: Actualiza un hito existente
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: idHito
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID del hito
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/CrearHitoRequest'
- *     responses:
- *       200:
- *         description: Hito actualizado correctamente
- *       400:
- *         description: Validación de campos fallida
- *       401:
- *         description: Token requerido o inválido
- *       404:
- *         description: Hito no encontrado
- */
 export const actualizarHito = async (req, res) => {
   try {
     const { id_estudiante } = req.usuario;
@@ -238,30 +127,6 @@ export const actualizarHito = async (req, res) => {
   }
 };
 
-/**
- * @openapi
- * /api/hitos/{idHito}:
- *   delete:
- *     tags:
- *       - Hitos
- *     summary: Elimina un hito
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: idHito
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID del hito
- *     responses:
- *       200:
- *         description: Hito eliminado correctamente
- *       401:
- *         description: Token requerido o inválido
- *       404:
- *         description: Hito no encontrado
- */
 export const eliminarHito = async (req, res) => {
   try {
     const { id_estudiante } = req.usuario;
