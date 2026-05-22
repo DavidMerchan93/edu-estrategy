@@ -2,7 +2,9 @@
   "name": "edu-estrategy",
   "private": true,
   "scripts": {
-    "postinstall": "npm install --prefix backend-edustrategy",
-    "start": "npm start --prefix backend-edustrategy"
+    "start": "concurrently \"npm start --prefix backend-edustrategy\" \"npm start --prefix frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
   }
 }
