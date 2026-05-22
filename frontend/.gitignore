@@ -1,1 +1,96 @@
 .vercel
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDEs y editores
+.vscode/
+.idea/
+*.iml
+*.suo
+*.user
+*.swp
+*.swo
+*~
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+dist/
+build/
+.next/
+.nuxt/
+.output/
+.cache/
+.parcel-cache/
+.turbo/
+
+# Variables de entorno
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+venv/
+.venv/
+env/
+*.egg-info/
+dist/
+*.egg
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Java / Maven / Gradle
+target/
+*.class
+*.jar
+*.war
+*.ear
+.gradle/
+build/
+
+# Logs
+logs/
+*.log
+
+# Cobertura y reportes de tests
+coverage/
+.coverage
+htmlcov/
+*.lcov
+test-results/
+junit.xml
+
+# Dependencias y bloqueos locales (conservar lock files del proyecto)
+# Descomenta si no quieres versionar los lock files:
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Temporales
+tmp/
+temp/
+*.tmp
+*.bak
+*.orig
+
