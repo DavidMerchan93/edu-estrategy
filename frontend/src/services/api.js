@@ -78,7 +78,8 @@ export async function apiListarTiposActividad() {
     headers: { Authorization: `Bearer ${getToken()}` },
   });
   const data = await res.json();
-  if (!res.ok) throw new Error(data.mensaje || 'Error al cargar tipos de actividad.');
+  if (!res.ok)
+    throw new Error(data.mensaje || 'Error al cargar tipos de actividad.');
   return data;
 }
 

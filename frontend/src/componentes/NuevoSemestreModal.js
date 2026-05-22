@@ -31,8 +31,13 @@ function NuevoSemestreModal({ isOpen, onClose, onGuardar, loading }) {
     if (!form.fecha_fin) {
       newErrors.fecha_fin = 'La fecha de fin es obligatoria.';
     }
-    if (form.fecha_inicio && form.fecha_fin && form.fecha_fin <= form.fecha_inicio) {
-      newErrors.fecha_fin = 'La fecha de fin debe ser posterior a la de inicio.';
+    if (
+      form.fecha_inicio &&
+      form.fecha_fin &&
+      form.fecha_fin <= form.fecha_inicio
+    ) {
+      newErrors.fecha_fin =
+        'La fecha de fin debe ser posterior a la de inicio.';
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -40,7 +45,10 @@ function NuevoSemestreModal({ isOpen, onClose, onGuardar, loading }) {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
@@ -81,7 +89,9 @@ function NuevoSemestreModal({ isOpen, onClose, onGuardar, loading }) {
             <input
               name="nombre"
               type="text"
-              className={errors.nombre ? 'form-input input-error' : 'form-input'}
+              className={
+                errors.nombre ? 'form-input input-error' : 'form-input'
+              }
               placeholder="Ej. 2026-2"
               value={form.nombre}
               onChange={handleChange}
@@ -97,7 +107,9 @@ function NuevoSemestreModal({ isOpen, onClose, onGuardar, loading }) {
             <input
               name="fecha_inicio"
               type="date"
-              className={errors.fecha_inicio ? 'form-input input-error' : 'form-input'}
+              className={
+                errors.fecha_inicio ? 'form-input input-error' : 'form-input'
+              }
               value={form.fecha_inicio}
               onChange={handleChange}
             />
@@ -111,7 +123,9 @@ function NuevoSemestreModal({ isOpen, onClose, onGuardar, loading }) {
             <input
               name="fecha_fin"
               type="date"
-              className={errors.fecha_fin ? 'form-input input-error' : 'form-input'}
+              className={
+                errors.fecha_fin ? 'form-input input-error' : 'form-input'
+              }
               value={form.fecha_fin}
               onChange={handleChange}
             />

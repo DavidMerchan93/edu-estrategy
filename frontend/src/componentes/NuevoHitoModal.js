@@ -48,14 +48,22 @@ function NuevoHitoModal({ isOpen, onClose, asignatura, onGuardar }) {
 
   const validate = () => {
     const newErrors = {};
-    if (!form.id_tipo_actividad) newErrors.id_tipo_actividad = 'Selecciona un tipo de actividad.';
-    if (!form.fecha_inicio) newErrors.fecha_inicio = 'La fecha de inicio es obligatoria.';
-    if (!form.fecha_cierre) newErrors.fecha_cierre = 'La fecha de cierre es obligatoria.';
+    if (!form.id_tipo_actividad)
+      newErrors.id_tipo_actividad = 'Selecciona un tipo de actividad.';
+    if (!form.fecha_inicio)
+      newErrors.fecha_inicio = 'La fecha de inicio es obligatoria.';
+    if (!form.fecha_cierre)
+      newErrors.fecha_cierre = 'La fecha de cierre es obligatoria.';
     if (!form.horas_dedicadas || Number(form.horas_dedicadas) <= 0) {
       newErrors.horas_dedicadas = 'Las horas deben ser mayores a 0.';
     }
-    if (form.fecha_inicio && form.fecha_cierre && form.fecha_cierre < form.fecha_inicio) {
-      newErrors.fecha_cierre = 'La fecha de cierre debe ser posterior o igual a la de inicio.';
+    if (
+      form.fecha_inicio &&
+      form.fecha_cierre &&
+      form.fecha_cierre < form.fecha_inicio
+    ) {
+      newErrors.fecha_cierre =
+        'La fecha de cierre debe ser posterior o igual a la de inicio.';
     }
     if (form.nota !== '' && (Number(form.nota) < 0 || Number(form.nota) > 5)) {
       newErrors.nota = 'La nota debe estar entre 0.00 y 5.00.';
@@ -133,7 +141,11 @@ function NuevoHitoModal({ isOpen, onClose, asignatura, onGuardar }) {
   const formatDate = (d) => {
     if (!d) return '';
     const dt = new Date(d);
-    return dt.toLocaleDateString('es-CO', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    return dt.toLocaleDateString('es-CO', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
   };
 
   return (
@@ -198,7 +210,14 @@ function NuevoHitoModal({ isOpen, onClose, asignatura, onGuardar }) {
             </div>
           )}
 
-          <p style={{ color: '#94a3b8', fontSize: 13, fontWeight: 600, margin: '0 0 12px 0' }}>
+          <p
+            style={{
+              color: '#94a3b8',
+              fontSize: 13,
+              fontWeight: 600,
+              margin: '0 0 12px 0',
+            }}
+          >
             {editandoId ? 'Editar hito' : 'Nuevo hito'}
           </p>
 
@@ -206,7 +225,11 @@ function NuevoHitoModal({ isOpen, onClose, asignatura, onGuardar }) {
             <label className="form-label">TIPO DE ACTIVIDAD *</label>
             <select
               name="id_tipo_actividad"
-              className={errors.id_tipo_actividad ? 'form-input input-error' : 'form-select'}
+              className={
+                errors.id_tipo_actividad
+                  ? 'form-input input-error'
+                  : 'form-select'
+              }
               value={form.id_tipo_actividad}
               onChange={handleChange}
             >
@@ -217,35 +240,49 @@ function NuevoHitoModal({ isOpen, onClose, asignatura, onGuardar }) {
                 </option>
               ))}
             </select>
-            {errors.id_tipo_actividad && <span className="error-message">{errors.id_tipo_actividad}</span>}
+            {errors.id_tipo_actividad && (
+              <span className="error-message">{errors.id_tipo_actividad}</span>
+            )}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div
+            style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}
+          >
             <div className="form-group">
               <label className="form-label">FECHA INICIO *</label>
               <input
                 name="fecha_inicio"
                 type="date"
-                className={errors.fecha_inicio ? 'form-input input-error' : 'form-input'}
+                className={
+                  errors.fecha_inicio ? 'form-input input-error' : 'form-input'
+                }
                 value={form.fecha_inicio}
                 onChange={handleChange}
               />
-              {errors.fecha_inicio && <span className="error-message">{errors.fecha_inicio}</span>}
+              {errors.fecha_inicio && (
+                <span className="error-message">{errors.fecha_inicio}</span>
+              )}
             </div>
             <div className="form-group">
               <label className="form-label">FECHA CIERRE *</label>
               <input
                 name="fecha_cierre"
                 type="date"
-                className={errors.fecha_cierre ? 'form-input input-error' : 'form-input'}
+                className={
+                  errors.fecha_cierre ? 'form-input input-error' : 'form-input'
+                }
                 value={form.fecha_cierre}
                 onChange={handleChange}
               />
-              {errors.fecha_cierre && <span className="error-message">{errors.fecha_cierre}</span>}
+              {errors.fecha_cierre && (
+                <span className="error-message">{errors.fecha_cierre}</span>
+              )}
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div
+            style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}
+          >
             <div className="form-group">
               <label className="form-label">HORAS DEDICADAS *</label>
               <input
@@ -253,12 +290,18 @@ function NuevoHitoModal({ isOpen, onClose, asignatura, onGuardar }) {
                 type="number"
                 step="0.5"
                 min="0.5"
-                className={errors.horas_dedicadas ? 'form-input input-error' : 'form-input'}
+                className={
+                  errors.horas_dedicadas
+                    ? 'form-input input-error'
+                    : 'form-input'
+                }
                 placeholder="Ej. 4"
                 value={form.horas_dedicadas}
                 onChange={handleChange}
               />
-              {errors.horas_dedicadas && <span className="error-message">{errors.horas_dedicadas}</span>}
+              {errors.horas_dedicadas && (
+                <span className="error-message">{errors.horas_dedicadas}</span>
+              )}
             </div>
             <div className="form-group">
               <label className="form-label">NOTA (0.00 – 5.00)</label>
@@ -268,22 +311,38 @@ function NuevoHitoModal({ isOpen, onClose, asignatura, onGuardar }) {
                 step="0.1"
                 min="0"
                 max="5"
-                className={errors.nota ? 'form-input input-error' : 'form-input'}
+                className={
+                  errors.nota ? 'form-input input-error' : 'form-input'
+                }
                 placeholder="Ej. 4.5"
                 value={form.nota}
                 onChange={handleChange}
               />
-              {errors.nota && <span className="error-message">{errors.nota}</span>}
+              {errors.nota && (
+                <span className="error-message">{errors.nota}</span>
+              )}
             </div>
           </div>
         </div>
 
         <div className="modal-footer">
-          <button className="btn-cancelar" onClick={handleCancel} disabled={loading}>
+          <button
+            className="btn-cancelar"
+            onClick={handleCancel}
+            disabled={loading}
+          >
             Cancelar
           </button>
-          <button className="btn-guardar" onClick={handleSubmit} disabled={loading}>
-            {loading ? 'Guardando...' : editandoId ? 'Actualizar hito' : 'Agregar hito'}
+          <button
+            className="btn-guardar"
+            onClick={handleSubmit}
+            disabled={loading}
+          >
+            {loading
+              ? 'Guardando...'
+              : editandoId
+                ? 'Actualizar hito'
+                : 'Agregar hito'}
           </button>
         </div>
       </div>

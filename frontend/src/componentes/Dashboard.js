@@ -244,7 +244,12 @@ function Dashboard({ setPantalla, usuario }) {
         <div className="tarjeta-seccion">
           <div className="seccion-header">
             <h2 className="seccion-titulo">Rendimiento por asignatura</h2>
-            <button className="btn-accion" onClick={() => setSemestreModalAbierto(true)}>+ Semestre</button>
+            <button
+              className="btn-accion"
+              onClick={() => setSemestreModalAbierto(true)}
+            >
+              + Semestre
+            </button>
           </div>
 
           <div className="grafica-leyenda">

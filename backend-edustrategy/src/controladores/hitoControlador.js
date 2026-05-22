@@ -31,7 +31,6 @@ export const listarHitos = async (req, res) => {
 
 export const crearHito = async (req, res) => {
   try {
-    const { id_estudiante } = req.usuario;
     const { idAsignatura } = req.params;
     const { id_tipo_actividad, fecha_inicio, fecha_cierre, horas_dedicadas, nota } = req.body;
 
