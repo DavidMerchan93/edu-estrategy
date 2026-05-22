@@ -1,6 +1,9 @@
 import { config } from 'dotenv';
 config();
 
+console.log('[diagnóstico] DATABASE_URL definida:', !!process.env.DATABASE_URL);
+console.log('[diagnóstico] PORT:', process.env.PORT || 'no definido');
+
 import express from 'express';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
