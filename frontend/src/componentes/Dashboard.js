@@ -1,14 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
 import NuevaAsignaturaModal from './NuevaAsignaturaModal';
-import { apiFetchDashboard } from '../services/api';
+import NuevoSemestreModal from './NuevoSemestreModal';
+import NuevoHitoModal from './NuevoHitoModal';
+import {
+  apiFetchDashboard,
+  apiCrearAsignatura,
+  apiActualizarAsignatura,
+  apiEliminarAsignatura,
+  apiCrearSemestre,
+} from '../services/api';
 
 function Dashboard({ setPantalla, usuario }) {
   const [busqueda, setBusqueda] = useState('');
   const [asignaturas, setAsignaturas] = useState([]);
   const [semestre, setSemestre] = useState('');
   const [modalAbierto, setModalAbierto] = useState(false);
+  const [semestreModalAbierto, setSemestreModalAbierto] = useState(false);
+  const [hitoModalAbierto, setHitoModalAbierto] = useState(false);
+  const [asignaturaSeleccionada, setAsignaturaSeleccionada] = useState(null);
   const [asignaturaEditando, setAsignaturaEditando] = useState(null);
+  const [loadingModal, setLoadingModal] = useState(false);
 
   /* App.css pone body en display:flex para centrar las tarjetas de Login/Registro.
      El Dashboard es full-page y no debe heredar ese centrado. */
@@ -91,35 +103,93 @@ function Dashboard({ setPantalla, usuario }) {
     setModalAbierto(true);
   };
 
-  const handleGuardar = (datos) => {
-    if (asignaturaEditando) {
-      // EDITAR
-      setAsignaturas((prev) =>
-        prev.map((a) =>
-          a.id === asignaturaEditando.id ? { ...a, ...datos } : a
-        )
-      );
-      alert('¡Asignatura actualizada correctamente ✍️!');
-    } else {
-      // CREAR
-      const nueva = {
-        id: Date.now(),
-        codigo: datos.nombre.slice(0, 3).toUpperCase(),
-        hitos: 0,
-        nota: 0,
-        tiempo: 0,
-        ...datos,
-      };
-      alert('¡Asignatura guardada correctamente ✅!');
-      setAsignaturas((prev) => [...prev, nueva]);
+  const handleGuardar = async (datos) => {
+    setLoadingModal(true);
+    try {
+      if (asignaturaEditando) {
+        const actualizada = await apiActualizarAsignatura(
+          asignaturaEditando.id,
+          {
+            nombre: datos.nombre,
+            docente: datos.docente,
+          }
+        );
+        setAsignaturas((prev) =>
+          prev.map((a) =>
+            a.id === asignaturaEditando.id
+              ? {
+                  ...a,
+                  nombre: actualizada.nombre,
+                  codigo: actualizada.nombre.slice(0, 3).toUpperCase(),
+                  docente: actualizada.nombre_docente,
+                }
+              : a
+          )
+        );
+      } else {
+        const nueva = await apiCrearAsignatura({
+          nombre: datos.nombre,
+          docente: datos.docente,
+        });
+        setAsignaturas((prev) => [
+          ...prev,
+          {
+            id: nueva.id_asignatura,
+            nombre: nueva.nombre,
+            codigo: nueva.nombre.slice(0, 3).toUpperCase(),
+            docente: nueva.nombre_docente,
+            semestre: semestreActivo,
+            hitos: 0,
+            nota: 0,
+            tiempo: 0,
+          },
+        ]);
+      }
+      setModalAbierto(false);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setLoadingModal(false);
     }
-    setModalAbierto(false);
   };
 
-  const handleEliminar = (id) => {
-    if (window.confirm('¿Seguro que deseas eliminar esta asignatura 🗑️?')) {
+  const handleEliminar = async (id) => {
+    if (!window.confirm('¿Seguro que deseas eliminar esta asignatura?')) return;
+    try {
+      await apiEliminarAsignatura(id);
       setAsignaturas((prev) => prev.filter((a) => a.id !== id));
+    } catch (err) {
+      alert(err.message);
     }
+  };
+
+  const refreshDashboard = async () => {
+    const token = localStorage.getItem('edu_token');
+    const data = await apiFetchDashboard(token);
+    setAsignaturas(data.asignaturas);
+    setSemestre(data.semestreActivo);
+  };
+
+  const handleCrearSemestre = async (datos) => {
+    setLoadingModal(true);
+    try {
+      await apiCrearSemestre(datos);
+      setSemestreModalAbierto(false);
+      await refreshDashboard();
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setLoadingModal(false);
+    }
+  };
+
+  const handleAbrirHitos = (asignatura) => {
+    setAsignaturaSeleccionada(asignatura);
+    setHitoModalAbierto(true);
+  };
+
+  const handleHitoGuardado = async () => {
+    await refreshDashboard();
   };
   return (
     <div className="dashboard-pagina">
@@ -174,7 +244,7 @@ function Dashboard({ setPantalla, usuario }) {
         <div className="tarjeta-seccion">
           <div className="seccion-header">
             <h2 className="seccion-titulo">Rendimiento por asignatura</h2>
-            <button className="btn-accion">+ Semestre</button>
+            <button className="btn-accion" onClick={() => setSemestreModalAbierto(true)}>+ Semestre</button>
           </div>
 
           <div className="grafica-leyenda">
@@ -270,6 +340,14 @@ function Dashboard({ setPantalla, usuario }) {
                         🖊️
                       </button>
                       <button
+                        className="btn-tabla"
+                        title="Ver hitos"
+                        onClick={() => handleAbrirHitos(asignatura)}
+                        style={{ borderColor: '#334155', fontSize: 11 }}
+                      >
+                        H
+                      </button>
+                      <button
                         className="btn-tabla eliminar"
                         title="Eliminar asignatura"
                         onClick={() => handleEliminar(asignatura.id)}
@@ -299,7 +377,19 @@ function Dashboard({ setPantalla, usuario }) {
             onClose={() => setModalAbierto(false)}
             onGuardar={handleGuardar}
             asignaturaEditando={asignaturaEditando}
-            loading={false}
+            loading={loadingModal}
+          />
+          <NuevoSemestreModal
+            isOpen={semestreModalAbierto}
+            onClose={() => setSemestreModalAbierto(false)}
+            onGuardar={handleCrearSemestre}
+            loading={loadingModal}
+          />
+          <NuevoHitoModal
+            isOpen={hitoModalAbierto}
+            onClose={() => setHitoModalAbierto(false)}
+            asignatura={asignaturaSeleccionada}
+            onGuardar={handleHitoGuardado}
           />
         </div>
       </main>
