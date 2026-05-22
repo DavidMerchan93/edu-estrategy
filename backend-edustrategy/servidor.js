@@ -1,6 +1,9 @@
 import { config } from 'dotenv';
 config();
 
+console.log('[diag] DATABASE_URL:', process.env.DATABASE_URL ? 'DEFINIDA' : 'NO DEFINIDA');
+console.log('[diag] JWT_SECRET:', process.env.JWT_SECRET ? 'DEFINIDA' : 'NO DEFINIDA');
+
 import express from 'express';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
