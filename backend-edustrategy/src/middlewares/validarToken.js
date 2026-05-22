@@ -15,7 +15,7 @@ export const validarToken = (req, res, next) => {
     req.usuario = decoded;
 
     next();
-  } catch (error) {
+  } catch {
     return res.status(401).json({ mensaje: "Token inválido" });
   }
 };
