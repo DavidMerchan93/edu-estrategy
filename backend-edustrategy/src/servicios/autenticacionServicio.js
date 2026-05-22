@@ -118,6 +118,13 @@ export const iniciarSesion = async ({ email, password }) => {
 
   return {
     token,
-    usuario: user,
+    usuario: {
+      id_estudiante: user.id_estudiante,
+      nombre_completo: user.nombre_completo,
+      email: user.email,
+      carrera: user.carrera,
+      semestre_actual: user.semestre_actual,
+      rol: user.rol,
+    },
   };
 };

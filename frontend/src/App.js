@@ -4,7 +4,6 @@ import Login from './componentes/Login';
 import Registro from './componentes/Registro';
 import Dashboard from './componentes/Dashboard';
 
-
 function App() {
   /* Controla qué pantalla se muestra: 'login' | 'registro' | 'dashboard' */
   const [pantalla, setPantalla] = useState('login');

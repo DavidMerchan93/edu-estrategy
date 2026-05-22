@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
-import { asignaturasFake } from '../data/mockData';
 import NuevaAsignaturaModal from './NuevaAsignaturaModal';
 import { apiFetchDashboard } from '../services/api';
 
-
 function Dashboard({ setPantalla, usuario }) {
   const [busqueda, setBusqueda] = useState('');
-  const [asignaturas, setAsignaturas] = useState(asignaturasFake);
+  const [asignaturas, setAsignaturas] = useState([]);
+  const [semestre, setSemestre] = useState('');
   const [modalAbierto, setModalAbierto] = useState(false);
   const [asignaturaEditando, setAsignaturaEditando] = useState(null);
-  const [cargando, setCargando] = useState(true);
 
   /* App.css pone body en display:flex para centrar las tarjetas de Login/Registro.
      El Dashboard es full-page y no debe heredar ese centrado. */
@@ -33,9 +31,11 @@ function Dashboard({ setPantalla, usuario }) {
       return;
     }
     apiFetchDashboard(token)
-      .then((data) => setAsignaturas(data.asignaturas))
-      .catch(() => setPantalla('login'))
-      .finally(() => setCargando(false));
+      .then((data) => {
+        setAsignaturas(data.asignaturas);
+        setSemestre(data.semestreActivo);
+      })
+      .catch(() => setPantalla('login'));
   }, [setPantalla]);
 
   const totalAsignaturas = asignaturas.length;
@@ -70,53 +70,57 @@ function Dashboard({ setPantalla, usuario }) {
     return 'nota-rojo';
   };
 
-  const nombreUsuario = usuario?.nombre ?? 'Estudiante';
-  const inicialesUsuario = usuario?.iniciales ?? '?';
-  const semestreActivo = usuario?.semestreActivo ?? '2026-1';
+  const nombreUsuario = usuario?.nombre_completo ?? 'Estudiante';
+  const inicialesUsuario = usuario?.nombre_completo
+    ? usuario.nombre_completo
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase()
+    : '?';
+  const semestreActivo = semestre || '2026-1';
 
   const handleAbrirCrear = () => {
-  setAsignaturaEditando(null);
-  setModalAbierto(true);
-  
-};
+    setAsignaturaEditando(null);
+    setModalAbierto(true);
+  };
 
-const handleAbrirEditar = (asignatura) => {
-  setAsignaturaEditando(asignatura);
-  setModalAbierto(true);
-  
-};
+  const handleAbrirEditar = (asignatura) => {
+    setAsignaturaEditando(asignatura);
+    setModalAbierto(true);
+  };
 
-const handleGuardar = (datos) => {
-  if (asignaturaEditando) {
-    // EDITAR
-    setAsignaturas((prev) =>
-      prev.map((a) =>
-        a.id === asignaturaEditando.id ? { ...a, ...datos } : a
-    
-      )
-    );
-    alert('¡Asignatura actualizada correctamente ✍️!');
-  } else {
-    // CREAR
-    const nueva = {
-      id: Date.now(),
-      codigo: datos.nombre.slice(0, 3).toUpperCase(),
-      hitos: 0,
-      nota: 0,
-      tiempo: 0,
-      ...datos,
-    };
-    alert('¡Asignatura guardada correctamente ✅!');
-    setAsignaturas((prev) => [...prev, nueva]);
-  }
-  setModalAbierto(false);
-};
+  const handleGuardar = (datos) => {
+    if (asignaturaEditando) {
+      // EDITAR
+      setAsignaturas((prev) =>
+        prev.map((a) =>
+          a.id === asignaturaEditando.id ? { ...a, ...datos } : a
+        )
+      );
+      alert('¡Asignatura actualizada correctamente ✍️!');
+    } else {
+      // CREAR
+      const nueva = {
+        id: Date.now(),
+        codigo: datos.nombre.slice(0, 3).toUpperCase(),
+        hitos: 0,
+        nota: 0,
+        tiempo: 0,
+        ...datos,
+      };
+      alert('¡Asignatura guardada correctamente ✅!');
+      setAsignaturas((prev) => [...prev, nueva]);
+    }
+    setModalAbierto(false);
+  };
 
-const handleEliminar = (id) => {
-  if (window.confirm('¿Seguro que deseas eliminar esta asignatura 🗑️?')) {
-    setAsignaturas((prev) => prev.filter((a) => a.id !== id));
-  }
-};
+  const handleEliminar = (id) => {
+    if (window.confirm('¿Seguro que deseas eliminar esta asignatura 🗑️?')) {
+      setAsignaturas((prev) => prev.filter((a) => a.id !== id));
+    }
+  };
   return (
     <div className="dashboard-pagina">
       {/* ---- BARRA DE NAVEGACIÓN SUPERIOR ---- */}
@@ -219,7 +223,9 @@ const handleEliminar = (id) => {
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
             />
-            <button className="btn-accion" onClick={handleAbrirCrear}>+ Crear asignatura</button>
+            <button className="btn-accion" onClick={handleAbrirCrear}>
+              + Crear asignatura
+            </button>
           </div>
 
           <table className="tabla">
@@ -256,13 +262,19 @@ const handleEliminar = (id) => {
                   <td>{asignatura.tiempo}h</td>
                   <td>
                     <div className="acciones-grupo">
-                     <button className="btn-tabla" title="Editar asignatura"
-                      onClick={() => handleAbrirEditar(asignatura)}>
-                      🖊️
+                      <button
+                        className="btn-tabla"
+                        title="Editar asignatura"
+                        onClick={() => handleAbrirEditar(asignatura)}
+                      >
+                        🖊️
                       </button>
-                      <button className="btn-tabla eliminar" title="Eliminar asignatura"
-                      onClick={() => handleEliminar(asignatura.id)}>
-                      ✕
+                      <button
+                        className="btn-tabla eliminar"
+                        title="Eliminar asignatura"
+                        onClick={() => handleEliminar(asignatura.id)}
+                      >
+                        ✕
                       </button>
                     </div>
                   </td>
@@ -283,19 +295,11 @@ const handleEliminar = (id) => {
             </p>
           )}
           <NuevaAsignaturaModal
-          isOpen={modalAbierto}
-          onClose={() => setModalAbierto(false)}
-          onGuardar={(nuevaAsignatura) => {
-          setModalAbierto(false);
-          }}
-          loading={false}
-          />
-          <NuevaAsignaturaModal
-          isOpen={modalAbierto}
-          onClose={() => setModalAbierto(false)}
-          onGuardar={handleGuardar}
-          asignaturaEditando={asignaturaEditando}
-          loading={false}
+            isOpen={modalAbierto}
+            onClose={() => setModalAbierto(false)}
+            onGuardar={handleGuardar}
+            asignaturaEditando={asignaturaEditando}
+            loading={false}
           />
         </div>
       </main>

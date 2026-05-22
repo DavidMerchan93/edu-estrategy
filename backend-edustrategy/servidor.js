@@ -1,6 +1,8 @@
+import { config } from 'dotenv';
+config();
+
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 
 import saludRutas from './src/rutas/saludRutas.js';
 import autenticacionRutas from './src/rutas/autenticacionRutas.js';
@@ -8,7 +10,7 @@ import usuarioRutas from './src/rutas/usuarioRutas.js';
 import asignaturaRutas from './src/rutas/asignaturaRutas.js';
 import dashboardRutas from './src/rutas/dashboardRutas.js';
 
-dotenv.config();
+console.log('[DEBUG] DATABASE_URL presente:', !!process.env.DATABASE_URL);
 
 const app = express();
 

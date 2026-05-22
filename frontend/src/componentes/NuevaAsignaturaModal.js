@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 
-
 const SEMESTRES = ['2025-1', '2025-2', '2026-1', '2026-2', '2027-1', '2027-2'];
 
 const INITIAL_FORM = {
@@ -9,19 +8,25 @@ const INITIAL_FORM = {
   semestre: '2026-1',
 };
 
-function NuevaAsignaturaModal({ isOpen, onClose, onGuardar, loading, asignaturaEditando }) {
+function NuevaAsignaturaModal({
+  isOpen,
+  onClose,
+  onGuardar,
+  loading,
+  asignaturaEditando,
+}) {
   const [form, setForm] = useState(INITIAL_FORM);
   useEffect(() => {
-  if (asignaturaEditando) {
-    setForm({
-      nombre: asignaturaEditando.nombre,
-      docente: asignaturaEditando.docente,
-      semestre: asignaturaEditando.semestre,
-    });
-  } else {
-    setForm(INITIAL_FORM);
-  }
-}, [asignaturaEditando, isOpen]);
+    if (asignaturaEditando) {
+      setForm({
+        nombre: asignaturaEditando.nombre,
+        docente: asignaturaEditando.docente,
+        semestre: asignaturaEditando.semestre,
+      });
+    } else {
+      setForm(INITIAL_FORM);
+    }
+  }, [asignaturaEditando, isOpen]);
 
   const [errors, setErrors] = useState({ nombre: '', docente: '' });
 
@@ -70,30 +75,37 @@ function NuevaAsignaturaModal({ isOpen, onClose, onGuardar, loading, asignaturaE
   };
 
   return (
-    <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && handleCancel()}>
+    <div
+      className="modal-overlay"
+      onClick={(e) => e.target === e.currentTarget && handleCancel()}
+    >
       <div className="modal-container">
-
         <div className="modal-header">
           <h2 className="modal-title">
-          {asignaturaEditando ? 'Editar asignatura' : 'Nueva asignatura'}
+            {asignaturaEditando ? 'Editar asignatura' : 'Nueva asignatura'}
           </h2>
-          <button className="modal-close-btn" onClick={handleCancel}>×</button>
+          <button className="modal-close-btn" onClick={handleCancel}>
+            ×
+          </button>
         </div>
 
         <div className="modal-body">
-
           <div className="form-group">
             <label className="form-label">NOMBRE DE LA ASIGNATURA *</label>
             <input
               name="nombre"
               type="text"
-              className={errors.nombre ? 'form-input input-error' : 'form-input'}
+              className={
+                errors.nombre ? 'form-input input-error' : 'form-input'
+              }
               placeholder="Ej. Cálculo Diferencial"
               value={form.nombre}
               onChange={handleChange}
               maxLength={100}
             />
-            {errors.nombre && <span className="error-message">{errors.nombre}</span>}
+            {errors.nombre && (
+              <span className="error-message">{errors.nombre}</span>
+            )}
           </div>
 
           <div className="form-group">
@@ -101,13 +113,17 @@ function NuevaAsignaturaModal({ isOpen, onClose, onGuardar, loading, asignaturaE
             <input
               name="docente"
               type="text"
-              className={errors.docente ? 'form-input input-error' : 'form-input'}
+              className={
+                errors.docente ? 'form-input input-error' : 'form-input'
+              }
               placeholder="Ej. Prof. García"
               value={form.docente}
               onChange={handleChange}
               maxLength={80}
             />
-            {errors.docente && <span className="error-message">{errors.docente}</span>}
+            {errors.docente && (
+              <span className="error-message">{errors.docente}</span>
+            )}
           </div>
 
           <div className="form-group">
@@ -119,22 +135,30 @@ function NuevaAsignaturaModal({ isOpen, onClose, onGuardar, loading, asignaturaE
               onChange={handleChange}
             >
               {SEMESTRES.map((s) => (
-                <option key={s} value={s}>{s}</option>
+                <option key={s} value={s}>
+                  {s}
+                </option>
               ))}
             </select>
           </div>
-
         </div>
 
         <div className="modal-footer">
-          <button className="btn-cancelar" onClick={handleCancel} disabled={loading}>
+          <button
+            className="btn-cancelar"
+            onClick={handleCancel}
+            disabled={loading}
+          >
             Cancelar
           </button>
-          <button className="btn-guardar" onClick={handleGuardar} disabled={loading}>
+          <button
+            className="btn-guardar"
+            onClick={handleGuardar}
+            disabled={loading}
+          >
             {loading ? 'Guardando...' : 'Guardar asignatura'}
           </button>
         </div>
-
       </div>
     </div>
   );

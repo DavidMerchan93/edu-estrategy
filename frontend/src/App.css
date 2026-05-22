@@ -22,7 +22,10 @@ body {
   text-align: center;
 }
 
-html, body, #root, .App {
+html,
+body,
+#root,
+.App {
   height: 100%;
   width: 100%;
   margin: 0;
@@ -199,7 +202,10 @@ html, body, #root, .App {
   transition: background 0.15s;
 }
 
-.nav-item:hover { background-color: #1a1f35; color: #e8eaf0; }
+.nav-item:hover {
+  background-color: #1a1f35;
+  color: #e8eaf0;
+}
 
 .nav-item.active {
   background-color: #1a2a4a;
@@ -207,7 +213,9 @@ html, body, #root, .App {
   font-weight: 600;
 }
 
-.nav-icon { font-size: 1rem; }
+.nav-icon {
+  font-size: 1rem;
+}
 
 .dashboard-main {
   flex: 1;
@@ -223,7 +231,6 @@ html, body, #root, .App {
   padding: 1rem 2rem;
   border-bottom: 1px solid #1e2235;
   background-color: #111320;
-
 }
 
 .semestre-badge {
@@ -276,7 +283,10 @@ html, body, #root, .App {
   border: 1px solid #1e2235;
 }
 
-.empty-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+.empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
 
 .empty-title {
   font-size: 1.1rem;
@@ -304,9 +314,14 @@ html, body, #root, .App {
   transition: background 0.15s;
 }
 
-.btn-crear:hover { background-color: #2563eb; }
+.btn-crear:hover {
+  background-color: #2563eb;
+}
 
-.tabla-wrapper { width: 100%; align-self: flex-start; }
+.tabla-wrapper {
+  width: 100%;
+  align-self: flex-start;
+}
 
 .tabla-header {
   display: flex;
@@ -315,7 +330,10 @@ html, body, #root, .App {
   margin-bottom: 1rem;
 }
 
-.tabla-header h2 { font-size: 1.1rem; font-weight: 600; }
+.tabla-header h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
 
 .tabla {
   width: 100%;
@@ -341,9 +359,12 @@ html, body, #root, .App {
   border-bottom: 1px solid #1a1f35;
 }
 
-.tabla tr:last-child td { border-bottom: none; }
-.tabla tbody tr:hover { background-color: #1a1f35; }
-
+.tabla tr:last-child td {
+  border-bottom: none;
+}
+.tabla tbody tr:hover {
+  background-color: #1a1f35;
+}
 
 /* Modal nueva asignatura */
 
@@ -365,7 +386,9 @@ html, body, #root, .App {
   width: 100%;
   max-width: 480px;
   border: 1px solid #334155;
-  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(59, 130, 246, 0.08);
+  box-shadow:
+    0 25px 80px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(59, 130, 246, 0.08);
   animation: modalEntrada 0.2s ease-out;
 }
 
@@ -442,10 +465,14 @@ html, body, #root, .App {
   outline: none;
   width: 100%;
   box-sizing: border-box;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
 }
 
-.form-input::placeholder { color: #3d4560; }
+.form-input::placeholder {
+  color: #3d4560;
+}
 
 .form-input:focus,
 .form-select:focus {
@@ -469,7 +496,9 @@ html, body, #root, .App {
   font-size: 0.9375rem;
   font-weight: 600;
   padding: 0.65rem 1.5rem;
-  transition: background 0.15s, transform 0.1s;
+  transition:
+    background 0.15s,
+    transform 0.1s;
 }
 
 .btn-guardar:hover:not(:disabled) {
