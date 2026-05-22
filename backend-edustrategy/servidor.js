@@ -3,7 +3,9 @@ config();
 
 import express from 'express';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
 
+import swaggerSpec from './src/configuracion/swagger.js';
 import saludRutas from './src/rutas/saludRutas.js';
 import autenticacionRutas from './src/rutas/autenticacionRutas.js';
 import usuarioRutas from './src/rutas/usuarioRutas.js';
@@ -16,6 +18,9 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+app.use('/api-docs', ...swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/api-docs.json', (req, res) => res.json(swaggerSpec));
 
 app.use('/api/salud', saludRutas);
 app.use('/api/autenticacion', autenticacionRutas);
