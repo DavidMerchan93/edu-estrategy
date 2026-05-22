@@ -5,6 +5,7 @@ import { apiFetchDashboard } from '../services/api';
 function Dashboard({ setPantalla, usuario }) {
   const [busqueda, setBusqueda] = useState('');
   const [asignaturas, setAsignaturas] = useState([]);
+  const [semestre, setSemestre] = useState('');
   const [cargando, setCargando] = useState(true);
 
   /* App.css pone body en display:flex para centrar las tarjetas de Login/Registro.
@@ -28,7 +29,10 @@ function Dashboard({ setPantalla, usuario }) {
       return;
     }
     apiFetchDashboard(token)
-      .then((data) => setAsignaturas(data.asignaturas))
+      .then((data) => {
+        setAsignaturas(data.asignaturas);
+        setSemestre(data.semestreActivo);
+      })
       .catch(() => setPantalla('login'))
       .finally(() => setCargando(false));
   }, [setPantalla]);
@@ -65,9 +69,16 @@ function Dashboard({ setPantalla, usuario }) {
     return 'nota-rojo';
   };
 
-  const nombreUsuario = usuario?.nombre ?? 'Estudiante';
-  const inicialesUsuario = usuario?.iniciales ?? '?';
-  const semestreActivo = usuario?.semestreActivo ?? '2026-1';
+  const nombreUsuario = usuario?.nombre_completo ?? 'Estudiante';
+  const inicialesUsuario = usuario?.nombre_completo
+    ? usuario.nombre_completo
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase()
+    : '?';
+  const semestreActivo = semestre || '2026-1';
 
   if (cargando) {
     return (

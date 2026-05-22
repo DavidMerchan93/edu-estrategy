@@ -12,6 +12,7 @@ export const registro = async (req, res) => {
       usuario,
     });
   } catch (error) {
+    console.error('[registro] error:', error);
     res.status(error.statusCode || 500).json({
       mensaje: error.message,
     });
@@ -28,6 +29,7 @@ export const login = async (req, res) => {
       usuario: data.usuario,
     });
   } catch (error) {
+    console.error('[login] error:', error);
     res.status(error.statusCode || 500).json({
       mensaje: error.message,
     });
