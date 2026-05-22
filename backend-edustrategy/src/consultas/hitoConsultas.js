@@ -23,6 +23,7 @@ export async function listarHitosPorAsignatura(idAsignatura, idEstudiante) {
 
 export async function crearHitoDB(
   idAsignatura,
+  idEstudiante,
   idTipoActividad,
   fechaInicio,
   fechaCierre,
@@ -31,11 +32,16 @@ export async function crearHitoDB(
 ) {
   const { rows } = await pool.query(
     `INSERT INTO hito (id_asignatura, id_tipo_actividad, fecha_inicio, fecha_cierre, horas_dedicadas, nota)
-     VALUES ($1, $2, $3, $4, $5, $6)
+     SELECT $1, $2, $3, $4, $5, $6
+     WHERE EXISTS (
+       SELECT 1 FROM asignatura a
+       JOIN semestre s ON s.id_semestre = a.id_semestre
+       WHERE a.id_asignatura = $7 AND s.id_estudiante = $8
+     )
      RETURNING *`,
-    [idAsignatura, idTipoActividad, fechaInicio, fechaCierre, horasDedicadas, nota]
+    [idAsignatura, idTipoActividad, fechaInicio, fechaCierre, horasDedicadas, nota, idAsignatura, idEstudiante]
   );
-  return rows[0];
+  return rows[0] || null;
 }
 
 export async function actualizarHitoDB(

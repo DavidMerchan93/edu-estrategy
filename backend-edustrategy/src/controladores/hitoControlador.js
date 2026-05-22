@@ -31,6 +31,7 @@ export const listarHitos = async (req, res) => {
 
 export const crearHito = async (req, res) => {
   try {
+    const { id_estudiante } = req.usuario;
     const { idAsignatura } = req.params;
     const { id_tipo_actividad, fecha_inicio, fecha_cierre, horas_dedicadas, nota } = req.body;
 
@@ -55,12 +56,17 @@ export const crearHito = async (req, res) => {
 
     const hito = await crearHitoDB(
       idAsignatura,
+      id_estudiante,
       id_tipo_actividad,
       fecha_inicio,
       fecha_cierre,
       horas_dedicadas,
       notaValor
     );
+
+    if (!hito) {
+      return res.status(404).json({ mensaje: 'Asignatura no encontrada' });
+    }
 
     res.status(201).json({
       mensaje: 'Hito creado correctamente',
