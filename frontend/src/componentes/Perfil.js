@@ -7,7 +7,9 @@ import {
 } from '../services/api';
 import './Perfil.css';
 
-const API_BASE = (process.env.REACT_APP_API_URL || 'http://localhost:5000').replace('/api', '');
+const API_BASE = (
+  process.env.REACT_APP_API_URL || 'http://localhost:5000'
+).replace('/api', '');
 
 function Perfil({ usuario, onVolver, onUsuarioActualizado }) {
   const [form, setForm] = useState({
@@ -176,11 +178,14 @@ function Perfil({ usuario, onVolver, onUsuarioActualizado }) {
               <span className="perfil-estado-label">Fecha de ingreso:</span>
               <span>
                 {usuario?.fecha_ingreso
-                  ? new Date(usuario.fecha_ingreso).toLocaleDateString('es-ES', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })
+                  ? new Date(usuario.fecha_ingreso).toLocaleDateString(
+                      'es-ES',
+                      {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      }
+                    )
                   : '—'}
               </span>
             </div>
@@ -223,7 +228,9 @@ function Perfil({ usuario, onVolver, onUsuarioActualizado }) {
                     value={usuario?.email || ''}
                     disabled
                   />
-                  <span className={`perfil-badge-verif ${usuario?.verificado ? 'verificado' : 'no-verificado'}`}>
+                  <span
+                    className={`perfil-badge-verif ${usuario?.verificado ? 'verificado' : 'no-verificado'}`}
+                  >
                     {usuario?.verificado ? 'Verificado' : 'No verificado'}
                   </span>
                 </div>
@@ -244,7 +251,10 @@ function Perfil({ usuario, onVolver, onUsuarioActualizado }) {
               </div>
 
               {mensaje && (
-                <div className="perfil-mensaje-full" style={{ gridColumn: 'span 2' }}>
+                <div
+                  className="perfil-mensaje-full"
+                  style={{ gridColumn: 'span 2' }}
+                >
                   <div className={`perfil-mensaje ${mensaje.tipo}`}>
                     {mensaje.texto}
                   </div>
@@ -296,8 +306,8 @@ function Perfil({ usuario, onVolver, onUsuarioActualizado }) {
                         Number(s.promedio) >= 4.0
                           ? 'nota-verde'
                           : Number(s.promedio) >= 3.0
-                          ? 'nota-amarillo'
-                          : 'nota-rojo'
+                            ? 'nota-amarillo'
+                            : 'nota-rojo'
                       }`}
                     >
                       {Number(s.promedio).toFixed(1)}
@@ -336,9 +346,7 @@ function Perfil({ usuario, onVolver, onUsuarioActualizado }) {
                     onClick={handleEliminarCuenta}
                     disabled={eliminando}
                   >
-                    {eliminando
-                      ? 'Eliminando...'
-                      : 'Sí, eliminar mi cuenta'}
+                    {eliminando ? 'Eliminando...' : 'Sí, eliminar mi cuenta'}
                   </button>
                 </div>
               </div>
