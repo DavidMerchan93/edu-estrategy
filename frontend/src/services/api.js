@@ -195,6 +195,52 @@ export async function apiEliminarHito(idHito) {
  * @param {number} id - ID de la asignatura
  * @returns {Promise<void>}
  */
+export async function apiActualizarPerfil(datos) {
+  const res = await fetch(`${BASE}/usuario/perfil`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${getToken()}`,
+    },
+    body: JSON.stringify(datos),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.mensaje || 'Error al actualizar perfil.');
+  return data.usuario;
+}
+
+export async function apiObtenerHistorialSemestres() {
+  const res = await fetch(`${BASE}/usuario/semestres`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.mensaje || 'Error al obtener semestres.');
+  return data.semestres;
+}
+
+export async function apiSubirFoto(file) {
+  const formData = new FormData();
+  formData.append('foto', file);
+  const res = await fetch(`${BASE}/usuario/foto`, {
+    method: 'PUT',
+    headers: { Authorization: `Bearer ${getToken()}` },
+    body: formData,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.mensaje || 'Error al subir foto.');
+  return data; // { mensaje, foto_url }
+}
+
+export async function apiEliminarCuenta() {
+  const res = await fetch(`${BASE}/usuario/cuenta`, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.mensaje || 'Error al eliminar cuenta.');
+  return data;
+}
+
 export async function apiEliminarAsignatura(id) {
   const res = await fetch(`${BASE}/asignaturas/${id}`, {
     method: 'DELETE',

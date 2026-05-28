@@ -606,3 +606,11 @@ body,
   border-color: #f87171;
   color: #f87171;
 }
+
+.App {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #0f172a; /* el color oscuro de fondo que ya tienes */
+}

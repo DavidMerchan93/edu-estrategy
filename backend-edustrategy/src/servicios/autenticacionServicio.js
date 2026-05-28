@@ -152,6 +152,7 @@ export const iniciarSesion = async ({ email, password }) => {
       email: user.email,
       carrera: user.carrera,
       semestre_actual: user.semestre_actual,
+      fecha_ingreso: user.fecha_ingreso,
       rol: user.rol,
     },
   };

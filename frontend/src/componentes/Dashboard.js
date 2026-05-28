@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
+import Perfil from './Perfil';
 import NuevaAsignaturaModal from './NuevaAsignaturaModal';
 import NuevoSemestreModal from './NuevoSemestreModal';
 import NuevoHitoModal from './NuevoHitoModal';
@@ -22,7 +23,7 @@ import {
  * @param {string} props.usuario.nombre_completo - Nombre completo del estudiante
  * @returns {JSX.Element}
  */
-function Dashboard({ setPantalla, usuario }) {
+function Dashboard({ setPantalla, usuario, setUsuario }) {
   const [busqueda, setBusqueda] = useState('');
   const [asignaturas, setAsignaturas] = useState([]);
   const [semestre, setSemestre] = useState('');
@@ -32,6 +33,7 @@ function Dashboard({ setPantalla, usuario }) {
   const [asignaturaSeleccionada, setAsignaturaSeleccionada] = useState(null);
   const [asignaturaEditando, setAsignaturaEditando] = useState(null);
   const [loadingModal, setLoadingModal] = useState(false);
+  const [vista, setVista] = useState('dashboard');
 
   /* App.css pone body en display:flex para centrar las tarjetas de Login/Registro.
      El Dashboard es full-page y no debe heredar ese centrado. */
@@ -241,6 +243,18 @@ function Dashboard({ setPantalla, usuario }) {
    * Abre el modal de hitos para la asignatura indicada.
    * @param {Object} asignatura - Asignatura seleccionada
    */
+  const handleIrAPerfil = () => {
+    setVista('perfil');
+  };
+
+  const handleVolverDashboard = () => {
+    setVista('dashboard');
+  };
+
+  const handleUsuarioActualizado = (actualizado) => {
+    setUsuario((prev) => ({ ...prev, ...actualizado }));
+  };
+
   const handleAbrirHitos = (asignatura) => {
     setAsignaturaSeleccionada(asignatura);
     setHitoModalAbierto(true);
@@ -264,8 +278,19 @@ function Dashboard({ setPantalla, usuario }) {
         </span>
 
         <div className="nav-usuario">
-          <div className="avatar">{inicialesUsuario}</div>
-          <span className="nombre-usuario">{nombreUsuario}</span>
+          <div
+            className="usuario-clickable"
+            onClick={handleIrAPerfil}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              cursor: 'pointer',
+            }}
+          >
+            <div className="avatar">{inicialesUsuario}</div>
+            <span className="nombre-usuario">{nombreUsuario}</span>
+          </div>
           <button
             className="btn-cerrar-sesion"
             onClick={() => {
@@ -279,187 +304,194 @@ function Dashboard({ setPantalla, usuario }) {
         </div>
       </nav>
 
-      {/* ---- CONTENIDO PRINCIPAL ---- */}
-      <main className="dashboard-contenido">
-        {/* ==== TARJETAS DE ESTADÍSTICAS ==== */}
-        <div className="fila-estadisticas">
-          <div className="tarjeta-stat">
-            <div className="stat-etiqueta">ASIGNATURAS</div>
-            <div className="stat-valor">{totalAsignaturas}</div>
-            <div className="stat-subtitulo">Semestre {semestreActivo}</div>
+      {vista === 'perfil' ? (
+        <Perfil
+          usuario={usuario}
+          onVolver={handleVolverDashboard}
+          onUsuarioActualizado={handleUsuarioActualizado}
+        />
+      ) : (
+        <main className="dashboard-contenido">
+          {/* ==== TARJETAS DE ESTADÍSTICAS ==== */}
+          <div className="fila-estadisticas">
+            <div className="tarjeta-stat">
+              <div className="stat-etiqueta">ASIGNATURAS</div>
+              <div className="stat-valor">{totalAsignaturas}</div>
+              <div className="stat-subtitulo">Semestre {semestreActivo}</div>
+            </div>
+
+            <div className="tarjeta-stat">
+              <div className="stat-etiqueta">PROMEDIO GENERAL</div>
+              <div className="stat-valor verde">{promedioGeneral}</div>
+              <div className="stat-subtitulo">Sobre 5.0</div>
+            </div>
+
+            <div className="tarjeta-stat">
+              <div className="stat-etiqueta">TIEMPO TOTAL</div>
+              <div className="stat-valor azul">{tiempoTotal}h</div>
+              <div className="stat-subtitulo">Horas acumuladas</div>
+            </div>
           </div>
 
-          <div className="tarjeta-stat">
-            <div className="stat-etiqueta">PROMEDIO GENERAL</div>
-            <div className="stat-valor verde">{promedioGeneral}</div>
-            <div className="stat-subtitulo">Sobre 5.0</div>
-          </div>
+          {/* ==== SECCIÓN: GRÁFICA DE BARRAS ==== */}
+          <div className="tarjeta-seccion">
+            <div className="seccion-header">
+              <h2 className="seccion-titulo">Rendimiento por asignatura</h2>
+              <button
+                className="btn-accion"
+                onClick={() => setSemestreModalAbierto(true)}
+              >
+                + Semestre
+              </button>
+            </div>
 
-          <div className="tarjeta-stat">
-            <div className="stat-etiqueta">TIEMPO TOTAL</div>
-            <div className="stat-valor azul">{tiempoTotal}h</div>
-            <div className="stat-subtitulo">Horas acumuladas</div>
-          </div>
-        </div>
+            <div className="grafica-leyenda">
+              <span className="leyenda-item">
+                <span className="leyenda-punto azul"></span>
+                Tiempo invertido (h)
+              </span>
+              <span className="leyenda-item">
+                <span className="leyenda-punto amarillo"></span>
+                Nota obtenida
+              </span>
+            </div>
 
-        {/* ==== SECCIÓN: GRÁFICA DE BARRAS ==== */}
-        <div className="tarjeta-seccion">
-          <div className="seccion-header">
-            <h2 className="seccion-titulo">Rendimiento por asignatura</h2>
-            <button
-              className="btn-accion"
-              onClick={() => setSemestreModalAbierto(true)}
-            >
-              + Semestre
-            </button>
-          </div>
-
-          <div className="grafica-leyenda">
-            <span className="leyenda-item">
-              <span className="leyenda-punto azul"></span>
-              Tiempo invertido (h)
-            </span>
-            <span className="leyenda-item">
-              <span className="leyenda-punto amarillo"></span>
-              Nota obtenida
-            </span>
-          </div>
-
-          <div className="grafica-barras">
-            {asignaturas.map((asignatura) => (
-              <div key={asignatura.id} className="grafica-grupo">
-                <div className="grafica-grupo-barras">
-                  <div
-                    className="barra azul"
-                    style={{ height: `${alturaTiempo(asignatura.tiempo)}px` }}
-                    title={`Tiempo: ${asignatura.tiempo}h`}
-                  ></div>
-                  <div
-                    className="barra amarillo"
-                    style={{ height: `${alturaNota(asignatura.nota)}px` }}
-                    title={`Nota: ${asignatura.nota}`}
-                  ></div>
+            <div className="grafica-barras">
+              {asignaturas.map((asignatura) => (
+                <div key={asignatura.id} className="grafica-grupo">
+                  <div className="grafica-grupo-barras">
+                    <div
+                      className="barra azul"
+                      style={{ height: `${alturaTiempo(asignatura.tiempo)}px` }}
+                      title={`Tiempo: ${asignatura.tiempo}h`}
+                    ></div>
+                    <div
+                      className="barra amarillo"
+                      style={{ height: `${alturaNota(asignatura.nota)}px` }}
+                      title={`Nota: ${asignatura.nota}`}
+                    ></div>
+                  </div>
+                  <span className="grafica-etiqueta">{asignatura.codigo}</span>
                 </div>
-                <span className="grafica-etiqueta">{asignatura.codigo}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ==== SECCIÓN: TABLA DE ASIGNATURAS ==== */}
-        <div className="tarjeta-seccion">
-          <div className="seccion-header">
-            <h2 className="seccion-titulo">Asignaturas</h2>
-          </div>
-
-          <div className="tabla-header">
-            <input
-              className="buscador-input"
-              type="text"
-              placeholder="🔍︎ Buscar asignatura "
-              value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
-            />
-            <button className="btn-accion" onClick={handleAbrirCrear}>
-              + Crear asignatura
-            </button>
-          </div>
-
-          <table className="tabla">
-            <thead>
-              <tr>
-                <th>ASIGNATURA</th>
-                <th>DOCENTE</th>
-                <th>HITOS</th>
-                <th>NOTA</th>
-                <th>TIEMPO</th>
-                <th>ACCIONES</th>
-              </tr>
-            </thead>
-            <tbody>
-              {asignaturasFiltradas.map((asignatura) => (
-                <tr key={asignatura.id}>
-                  <td>
-                    {asignatura.nombre}
-                    <span className="badge-semestre">
-                      {asignatura.semestre}
-                    </span>
-                  </td>
-                  <td>{asignatura.docente}</td>
-                  <td>
-                    <span className="badge-hitos">
-                      {asignatura.hitos} hitos
-                    </span>
-                  </td>
-                  <td>
-                    <span className={claseNota(asignatura.nota)}>
-                      {asignatura.nota.toFixed(1)}
-                    </span>
-                  </td>
-                  <td>{asignatura.tiempo}h</td>
-                  <td>
-                    <div className="acciones-grupo">
-                      <button
-                        className="btn-tabla"
-                        title="Editar asignatura"
-                        onClick={() => handleAbrirEditar(asignatura)}
-                      >
-                        🖊️
-                      </button>
-                      <button
-                        className="btn-tabla"
-                        title="Ver hitos"
-                        onClick={() => handleAbrirHitos(asignatura)}
-                        style={{ borderColor: '#334155', fontSize: 11 }}
-                      >
-                        H
-                      </button>
-                      <button
-                        className="btn-tabla eliminar"
-                        title="Eliminar asignatura"
-                        onClick={() => handleEliminar(asignatura.id)}
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  </td>
-                </tr>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </div>
 
-          {asignaturasFiltradas.length === 0 && (
-            <p
-              style={{
-                textAlign: 'center',
-                color: '#64748b',
-                padding: '24px 0',
-              }}
-            >
-              No se encontraron asignaturas que coincidan con "{busqueda}"
-            </p>
-          )}
-          <NuevaAsignaturaModal
-            isOpen={modalAbierto}
-            onClose={() => setModalAbierto(false)}
-            onGuardar={handleGuardar}
-            asignaturaEditando={asignaturaEditando}
-            loading={loadingModal}
-          />
-          <NuevoSemestreModal
-            isOpen={semestreModalAbierto}
-            onClose={() => setSemestreModalAbierto(false)}
-            onGuardar={handleCrearSemestre}
-            loading={loadingModal}
-          />
-          <NuevoHitoModal
-            isOpen={hitoModalAbierto}
-            onClose={() => setHitoModalAbierto(false)}
-            asignatura={asignaturaSeleccionada}
-            onGuardar={handleHitoGuardado}
-          />
-        </div>
-      </main>
+          {/* ==== SECCIÓN: TABLA DE ASIGNATURAS ==== */}
+          <div className="tarjeta-seccion">
+            <div className="seccion-header">
+              <h2 className="seccion-titulo">Asignaturas</h2>
+            </div>
+
+            <div className="tabla-header">
+              <input
+                className="buscador-input"
+                type="text"
+                placeholder="🔍︎ Buscar asignatura "
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+              />
+              <button className="btn-accion" onClick={handleAbrirCrear}>
+                + Crear asignatura
+              </button>
+            </div>
+
+            <table className="tabla">
+              <thead>
+                <tr>
+                  <th>ASIGNATURA</th>
+                  <th>DOCENTE</th>
+                  <th>HITOS</th>
+                  <th>NOTA</th>
+                  <th>TIEMPO</th>
+                  <th>ACCIONES</th>
+                </tr>
+              </thead>
+              <tbody>
+                {asignaturasFiltradas.map((asignatura) => (
+                  <tr key={asignatura.id}>
+                    <td>
+                      {asignatura.nombre}
+                      <span className="badge-semestre">
+                        {asignatura.semestre}
+                      </span>
+                    </td>
+                    <td>{asignatura.docente}</td>
+                    <td>
+                      <span className="badge-hitos">
+                        {asignatura.hitos} hitos
+                      </span>
+                    </td>
+                    <td>
+                      <span className={claseNota(asignatura.nota)}>
+                        {asignatura.nota.toFixed(1)}
+                      </span>
+                    </td>
+                    <td>{asignatura.tiempo}h</td>
+                    <td>
+                      <div className="acciones-grupo">
+                        <button
+                          className="btn-tabla"
+                          title="Editar asignatura"
+                          onClick={() => handleAbrirEditar(asignatura)}
+                        >
+                          🖊️
+                        </button>
+                        <button
+                          className="btn-tabla"
+                          title="Ver hitos"
+                          onClick={() => handleAbrirHitos(asignatura)}
+                          style={{ borderColor: '#334155', fontSize: 11 }}
+                        >
+                          H
+                        </button>
+                        <button
+                          className="btn-tabla eliminar"
+                          title="Eliminar asignatura"
+                          onClick={() => handleEliminar(asignatura.id)}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {asignaturasFiltradas.length === 0 && (
+              <p
+                style={{
+                  textAlign: 'center',
+                  color: '#64748b',
+                  padding: '24px 0',
+                }}
+              >
+                No se encontraron asignaturas que coincidan con "{busqueda}"
+              </p>
+            )}
+            <NuevaAsignaturaModal
+              isOpen={modalAbierto}
+              onClose={() => setModalAbierto(false)}
+              onGuardar={handleGuardar}
+              asignaturaEditando={asignaturaEditando}
+              loading={loadingModal}
+            />
+            <NuevoSemestreModal
+              isOpen={semestreModalAbierto}
+              onClose={() => setSemestreModalAbierto(false)}
+              onGuardar={handleCrearSemestre}
+              loading={loadingModal}
+            />
+            <NuevoHitoModal
+              isOpen={hitoModalAbierto}
+              onClose={() => setHitoModalAbierto(false)}
+              asignatura={asignaturaSeleccionada}
+              onGuardar={handleHitoGuardado}
+            />
+          </div>
+        </main>
+      )}
     </div>
   );
 }

@@ -58,7 +58,11 @@ function App() {
         <Registro setPantalla={setPantalla} setUsuario={setUsuario} />
       )}
       {pantalla === 'dashboard' && (
-        <Dashboard setPantalla={setPantalla} usuario={usuario} />
+        <Dashboard
+          setPantalla={setPantalla}
+          usuario={usuario}
+          setUsuario={setUsuario}
+        />
       )}
     </div>
   );
