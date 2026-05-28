@@ -1,5 +1,14 @@
 import jwt from "jsonwebtoken";
 
+/**
+ * Middleware que valida el token JWT enviado en el encabezado Authorization.
+ * Si el token es valido, adjunta el payload decodificado en `req.usuario` y
+ * llama a `next()`. De lo contrario responde con HTTP 401.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ * @returns {void}
+ */
 export const validarToken = (req, res, next) => {
   try {
     const token = req.headers["authorization"];

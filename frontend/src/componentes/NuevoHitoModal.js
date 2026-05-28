@@ -15,6 +15,17 @@ const INITIAL_FORM = {
   nota: '',
 };
 
+/**
+ * Modal para gestionar los hitos de una asignatura. Muestra la lista de hitos existentes
+ * y un formulario para crear o editar uno. Valida tipo, fechas, horas y nota.
+ * @component
+ * @param {Object} props
+ * @param {boolean} props.isOpen - Controla la visibilidad del modal
+ * @param {function(): void} props.onClose - Callback para cerrar el modal
+ * @param {{ id: number, nombre: string }} props.asignatura - Asignatura a la que pertenecen los hitos
+ * @param {function(): void} props.onGuardar - Callback invocado tras crear, editar o eliminar un hito
+ * @returns {JSX.Element | null}
+ */
 function NuevoHitoModal({ isOpen, onClose, asignatura, onGuardar }) {
   const [tipos, setTipos] = useState([]);
   const [hitos, setHitos] = useState([]);
@@ -23,6 +34,11 @@ function NuevoHitoModal({ isOpen, onClose, asignatura, onGuardar }) {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
+  /**
+   * Carga la lista de hitos de la asignatura desde la API y actualiza el estado.
+   * Memorizado con useCallback para usarse como dependencia estable en useEffect.
+   * @returns {Promise<void>}
+   */
   const cargarHitos = useCallback(async () => {
     if (!asignatura) return;
     try {
@@ -46,6 +62,10 @@ function NuevoHitoModal({ isOpen, onClose, asignatura, onGuardar }) {
 
   if (!isOpen) return null;
 
+  /**
+   * Valida todos los campos del formulario de hito: tipo, fechas, horas y nota (0-5).
+   * @returns {boolean} true si el formulario es valido
+   */
   const validate = () => {
     const newErrors = {};
     if (!form.id_tipo_actividad)
@@ -72,12 +92,20 @@ function NuevoHitoModal({ isOpen, onClose, asignatura, onGuardar }) {
     return Object.keys(newErrors).length === 0;
   };
 
+  /**
+   * Actualiza el campo del formulario y limpia su error si lo tenia.
+   * @param {React.ChangeEvent<HTMLInputElement | HTMLSelectElement>} e
+   */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
+  /**
+   * Crea o actualiza un hito segun si hay un ID en edicion. Recarga la lista al completar.
+   * @returns {Promise<void>}
+   */
   const handleSubmit = async () => {
     if (!validate()) return;
     setLoading(true);
@@ -108,6 +136,10 @@ function NuevoHitoModal({ isOpen, onClose, asignatura, onGuardar }) {
     }
   };
 
+  /**
+   * Carga los datos de un hito existente en el formulario para editarlo.
+   * @param {Object} hito - Hito a editar
+   */
   const handleEditar = (hito) => {
     setEditandoId(hito.id_hito);
     setForm({
@@ -120,6 +152,11 @@ function NuevoHitoModal({ isOpen, onClose, asignatura, onGuardar }) {
     setErrors({});
   };
 
+  /**
+   * Pide confirmacion y elimina un hito, recargando la lista y notificando al padre.
+   * @param {number} idHito
+   * @returns {Promise<void>}
+   */
   const handleEliminar = async (idHito) => {
     if (!window.confirm('¿Seguro que deseas eliminar este hito?')) return;
     try {
@@ -131,6 +168,7 @@ function NuevoHitoModal({ isOpen, onClose, asignatura, onGuardar }) {
     }
   };
 
+  /** Resetea el formulario, limpia el modo edicion y cierra el modal. */
   const handleCancel = () => {
     setForm(INITIAL_FORM);
     setEditandoId(null);
@@ -138,6 +176,11 @@ function NuevoHitoModal({ isOpen, onClose, asignatura, onGuardar }) {
     onClose();
   };
 
+  /**
+   * Formatea una fecha en formato legible para el locale colombiano (dd/mm/aaaa).
+   * @param {string | Date} d - Fecha a formatear
+   * @returns {string} Fecha formateada, o cadena vacia si no se proporciona valor
+   */
   const formatDate = (d) => {
     if (!d) return '';
     const dt = new Date(d);

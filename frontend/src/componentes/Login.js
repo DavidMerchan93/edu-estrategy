@@ -1,12 +1,25 @@
 import React, { useState } from 'react';
 import { apiLogin } from '../services/api';
 
+/**
+ * Pantalla de inicio de sesion. Valida las credenciales con la API,
+ * guarda el JWT en localStorage y redirige al dashboard si el login es exitoso.
+ * @component
+ * @param {Object} props
+ * @param {function(string): void} props.setPantalla - Cambia la pantalla activa de la app
+ * @param {function(Object): void} props.setUsuario - Establece los datos del usuario autenticado
+ * @returns {JSX.Element}
+ */
 function Login({ setPantalla, setUsuario }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  /**
+   * Maneja el envio del formulario de login, llama a la API y navega al dashboard.
+   * @param {React.FormEvent<HTMLFormElement>} e
+   */
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -23,6 +36,7 @@ function Login({ setPantalla, setUsuario }) {
     }
   };
 
+  /** Rellena el formulario con las credenciales de la cuenta de prueba principal. */
   const autocompletar = () => {
     setEmail('david@correo.edu.co');
     setPassword('Admin2026');

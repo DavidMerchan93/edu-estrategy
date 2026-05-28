@@ -5,6 +5,13 @@ import Registro from './componentes/Registro';
 import Dashboard from './componentes/Dashboard';
 import { apiObtenerPerfil } from './services/api';
 
+/**
+ * Componente raiz de la aplicacion. Gestiona el estado de autenticacion
+ * verificando el token en localStorage al montar el componente y renderiza
+ * condicionalmente Login, Registro o Dashboard segun la pantalla activa.
+ * @component
+ * @returns {JSX.Element}
+ */
 function App() {
   const [pantalla, setPantalla] = useState('cargando');
   const [usuario, setUsuario] = useState(null);

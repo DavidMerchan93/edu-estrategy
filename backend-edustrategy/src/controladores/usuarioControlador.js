@@ -48,6 +48,11 @@ import { pool } from "../configuracion/baseDatos.js";
  *             example:
  *               mensaje: Usuario no encontrado
  */
+/**
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 export const obtenerPerfil = async (req, res) => {
   try {
     const id = req.usuario.id_estudiante;
@@ -130,6 +135,11 @@ export const obtenerPerfil = async (req, res) => {
  *               $ref: '#/components/schemas/Error'
  *             example:
  *               mensaje: Usuario no encontrado
+ */
+/**
+ * @param {import('express').Request} req - Body: { nombre_completo, carrera, semestre_actual }
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
  */
 export const actualizarPerfil = async (req, res) => {
   try {

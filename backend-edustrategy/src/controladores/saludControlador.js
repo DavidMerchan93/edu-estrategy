@@ -22,6 +22,11 @@ import { pool } from '../configuracion/baseDatos.js';
  *                   type: string
  *                   example: Servidor EDU-STRATEGY funcionando correctamente
  */
+/**
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {void}
+ */
 export const verificarServidor = (req, res) => {
   res.json({
     estado: 'OK',
@@ -63,6 +68,11 @@ export const verificarServidor = (req, res) => {
  *               estado: ERROR
  *               mensaje: Error al conectar con PostgreSQL
  *               detalle: Connection refused
+ */
+/**
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
  */
 export const verificarBaseDatos = async (req, res) => {
   try {

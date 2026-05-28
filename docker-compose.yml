@@ -1,0 +1,22 @@
+services:
+  backend:
+    build:
+      context: ./backend-edustrategy
+      dockerfile: Dockerfile
+    container_name: edu-backend
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./backend-edustrategy/.env
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: edu-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped

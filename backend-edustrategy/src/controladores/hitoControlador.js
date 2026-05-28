@@ -6,6 +6,12 @@ import {
   eliminarHitoDB,
 } from '../consultas/hitoConsultas.js';
 
+/**
+ * Devuelve la lista de todos los tipos de actividad disponibles (quiz, parcial, proyecto, etc.).
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 export const getTiposActividad = async (req, res) => {
   try {
     const tipos = await listarTiposActividad();
@@ -16,6 +22,12 @@ export const getTiposActividad = async (req, res) => {
   }
 };
 
+/**
+ * Lista todos los hitos de una asignatura del estudiante autenticado.
+ * @param {import('express').Request} req - Params: { idAsignatura }
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 export const listarHitos = async (req, res) => {
   try {
     const { id_estudiante } = req.usuario;
@@ -29,6 +41,14 @@ export const listarHitos = async (req, res) => {
   }
 };
 
+/**
+ * Crea un hito para una asignatura del estudiante autenticado.
+ * Valida campos obligatorios, rango de horas, rango de fechas y rango de nota (0-5).
+ * Responde 400 en validaciones fallidas, 404 si la asignatura no existe, 201 si tiene exito.
+ * @param {import('express').Request} req - Params: { idAsignatura }; Body: { id_tipo_actividad, fecha_inicio, fecha_cierre, horas_dedicadas, nota? }
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 export const crearHito = async (req, res) => {
   try {
     const { id_estudiante } = req.usuario;
@@ -78,6 +98,13 @@ export const crearHito = async (req, res) => {
   }
 };
 
+/**
+ * Actualiza un hito del estudiante autenticado aplicando las mismas validaciones que crearHito.
+ * Responde 404 si el hito no existe o no pertenece al estudiante.
+ * @param {import('express').Request} req - Params: { idHito }; Body: { id_tipo_actividad, fecha_inicio, fecha_cierre, horas_dedicadas, nota? }
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 export const actualizarHito = async (req, res) => {
   try {
     const { id_estudiante } = req.usuario;
@@ -127,6 +154,13 @@ export const actualizarHito = async (req, res) => {
   }
 };
 
+/**
+ * Elimina un hito del estudiante autenticado.
+ * Responde 404 si el hito no existe o no pertenece al estudiante.
+ * @param {import('express').Request} req - Params: { idHito }
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 export const eliminarHito = async (req, res) => {
   try {
     const { id_estudiante } = req.usuario;

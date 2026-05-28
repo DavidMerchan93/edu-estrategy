@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
 
+/**
+ * Pantalla de registro de nuevo estudiante. La integracion con el backend
+ * esta pendiente de implementacion (handleSubmit actualmente no realiza peticion HTTP).
+ * @component
+ * @param {Object} props
+ * @param {function(string): void} props.setPantalla - Cambia la pantalla activa de la app
+ * @returns {JSX.Element}
+ */
 function Registro({ setPantalla }) {
   // guardar los datos del registro para que el programa los recuerde
   const [formData, setFormData] = useState({
@@ -13,12 +21,19 @@ function Registro({ setPantalla }) {
     confirmar: '',
   });
 
+  /**
+   * Actualiza el campo correspondiente en formData cuando el usuario escribe en un input.
+   * @param {React.ChangeEvent<HTMLInputElement>} e
+   */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Gestión del envío del formulario de registro
+  /**
+   * Maneja el envio del formulario de registro. La conexion con el backend esta pendiente.
+   * @param {React.FormEvent<HTMLFormElement>} e
+   */
   const handleSubmit = async (e) => {
     e.preventDefault(); // Payload para evitar que recargue y borre datos.
 

@@ -2,6 +2,22 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { pool } from '../configuracion/baseDatos.js';
 
+/**
+ * Registra un nuevo estudiante en la base de datos.
+ * Valida que todos los campos esten presentes, verifica que el correo no exista,
+ * hashea la contrasena con bcrypt y crea los registros en `credencial` y `estudiante`.
+ * @param {Object} data - Datos del formulario de registro
+ * @param {string} data.nombre_completo
+ * @param {string} data.email
+ * @param {string} data.password
+ * @param {string} data.identificacion
+ * @param {string} data.carrera
+ * @param {number} data.semestre_actual
+ * @param {string} data.fecha_ingreso - Formato ISO (YYYY-MM-DD)
+ * @returns {Promise<Object>} Fila del estudiante recien creado
+ * @throws {{ statusCode: 400 }} Si faltan campos obligatorios
+ * @throws {{ statusCode: 409 }} Si el correo ya esta registrado
+ */
 export const registrarUsuario = async (data) => {
   const {
     nombre_completo,
@@ -64,6 +80,18 @@ export const registrarUsuario = async (data) => {
   return estudiante.rows[0];
 };
 
+/**
+ * Autentica a un estudiante y devuelve un token JWT.
+ * Verifica credenciales, controla el bloqueo por intentos fallidos (maximo 3)
+ * y genera un JWT con expiracion de 1 hora.
+ * @param {Object} params
+ * @param {string} params.email
+ * @param {string} params.password
+ * @returns {Promise<{ token: string, usuario: Object }>} Token JWT y datos basicos del usuario
+ * @throws {{ statusCode: 400 }} Si el correo o la contrasena estan vacios
+ * @throws {{ statusCode: 401 }} Si las credenciales son invalidas
+ * @throws {{ statusCode: 403 }} Si la cuenta esta bloqueada
+ */
 export const iniciarSesion = async ({ email, password }) => {
   if (!email || !password) {
     throw { statusCode: 400, message: 'Correo y contraseña obligatorios' };
