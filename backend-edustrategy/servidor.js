@@ -1,4 +1,10 @@
-import { config } from "dotenv";
+/**
+ * @module servidor
+ * @description Punto de entrada principal del backend. Configura Express, CORS,
+ * el parser JSON, la documentacion Swagger y monta todas las rutas de la API
+ * bajo el prefijo /api.
+ */
+import { config } from 'dotenv';
 config();
 
 import express from "express";

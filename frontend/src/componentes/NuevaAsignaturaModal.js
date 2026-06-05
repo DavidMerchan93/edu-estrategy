@@ -8,6 +8,18 @@ const INITIAL_FORM = {
   semestre: '2026-1',
 };
 
+/**
+ * Modal para crear o editar una asignatura. Si recibe `asignaturaEditando`,
+ * precarga el formulario con los datos existentes; de lo contrario opera en modo creacion.
+ * @component
+ * @param {Object} props
+ * @param {boolean} props.isOpen - Controla la visibilidad del modal
+ * @param {function(): void} props.onClose - Callback para cerrar el modal
+ * @param {function(Object): void} props.onGuardar - Callback con los datos validados del formulario
+ * @param {boolean} props.loading - Muestra estado de carga en el boton de guardar
+ * @param {Object | null} props.asignaturaEditando - Asignatura a editar, o null para crear una nueva
+ * @returns {JSX.Element | null}
+ */
 function NuevaAsignaturaModal({
   isOpen,
   onClose,
@@ -32,6 +44,10 @@ function NuevaAsignaturaModal({
 
   if (!isOpen) return null;
 
+  /**
+   * Valida que nombre y docente no esten vacios. Actualiza el estado de errores.
+   * @returns {boolean} true si el formulario es valido
+   */
   const validate = () => {
     const newErrors = { nombre: '', docente: '' };
     let valid = true;
@@ -49,6 +65,10 @@ function NuevaAsignaturaModal({
     return valid;
   };
 
+  /**
+   * Actualiza el campo del formulario y limpia su error si lo tenia.
+   * @param {React.ChangeEvent<HTMLInputElement | HTMLSelectElement>} e
+   */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -57,6 +77,7 @@ function NuevaAsignaturaModal({
     }
   };
 
+  /** Valida el formulario y, si es correcto, llama a `onGuardar` con los datos. */
   const handleGuardar = () => {
     if (!validate()) return;
     onGuardar({
@@ -68,6 +89,7 @@ function NuevaAsignaturaModal({
     setErrors({ nombre: '', docente: '' });
   };
 
+  /** Resetea el formulario y cierra el modal via `onClose`. */
   const handleCancel = () => {
     setForm(INITIAL_FORM);
     setErrors({ nombre: '', docente: '' });

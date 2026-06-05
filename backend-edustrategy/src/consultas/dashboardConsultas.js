@@ -1,5 +1,14 @@
 import { pool } from '../configuracion/baseDatos.js';
 
+/**
+ * Obtiene todas las asignaturas de un semestre con sus metricas agregadas
+ * (cantidad de hitos, nota promedio y total de horas dedicadas).
+ * @param {number} idSemestre
+ * @returns {Promise<Array<{
+ *   id_asignatura: number, nombre: string, nombre_docente: string,
+ *   hitos: string, nota: string, tiempo: string
+ * }>>}
+ */
 export async function getAsignaturasPorSemestre(idSemestre) {
   const { rows } = await pool.query(
     `SELECT
@@ -19,6 +28,11 @@ export async function getAsignaturasPorSemestre(idSemestre) {
   return rows;
 }
 
+/**
+ * Devuelve el semestre marcado como activo para un estudiante, o null si no existe.
+ * @param {number} idEstudiante
+ * @returns {Promise<{ id_semestre: number, nombre: string } | null>}
+ */
 export async function getSemestreActivo(idEstudiante) {
   const { rows } = await pool.query(
     `SELECT id_semestre, nombre FROM semestre

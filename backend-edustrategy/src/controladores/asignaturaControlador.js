@@ -5,6 +5,13 @@ import {
   eliminarAsignaturaDB,
 } from '../consultas/asignaturaConsultas.js';
 
+/**
+ * Crea una asignatura en el semestre activo del estudiante autenticado.
+ * Responde 400 si faltan campos, 404 si no hay semestre activo, 201 si tiene exito.
+ * @param {import('express').Request} req - Body: { nombre, docente }
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 export const crearAsignatura = async (req, res) => {
   try {
     const { id_estudiante } = req.usuario;
@@ -37,6 +44,13 @@ export const crearAsignatura = async (req, res) => {
   }
 };
 
+/**
+ * Actualiza el nombre y el docente de una asignatura del estudiante autenticado.
+ * Responde 400 si faltan campos, 404 si no existe o no pertenece al estudiante.
+ * @param {import('express').Request} req - Params: { id }; Body: { nombre, docente }
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 export const actualizarAsignatura = async (req, res) => {
   try {
     const { id_estudiante } = req.usuario;
@@ -70,6 +84,13 @@ export const actualizarAsignatura = async (req, res) => {
   }
 };
 
+/**
+ * Elimina una asignatura del estudiante autenticado.
+ * Responde 404 si no existe o no pertenece al estudiante.
+ * @param {import('express').Request} req - Params: { id }
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 export const eliminarAsignatura = async (req, res) => {
   try {
     const { id_estudiante } = req.usuario;

@@ -12,6 +12,17 @@ import {
   apiCrearSemestre,
 } from '../services/api';
 
+/**
+ * Tablero principal de la aplicacion. Muestra estadisticas del semestre activo,
+ * grafica de barras por asignatura y tabla filtrable con operaciones CRUD sobre
+ * asignaturas e hitos. Redirige al login si el token es invalido o ha expirado.
+ * @component
+ * @param {Object} props
+ * @param {function(string): void} props.setPantalla - Cambia la pantalla activa de la app
+ * @param {Object} props.usuario - Datos del usuario autenticado
+ * @param {string} props.usuario.nombre_completo - Nombre completo del estudiante
+ * @returns {JSX.Element}
+ */
 function Dashboard({ setPantalla, usuario, setUsuario }) {
   const [busqueda, setBusqueda] = useState('');
   const [asignaturas, setAsignaturas] = useState([]);
@@ -75,9 +86,27 @@ function Dashboard({ setPantalla, usuario, setUsuario }) {
 
   const maxTiempo =
     asignaturas.length > 0 ? Math.max(...asignaturas.map((a) => a.tiempo)) : 1;
+  /**
+   * Calcula la altura en pixeles de la barra de tiempo de una asignatura
+   * relativa al maximo tiempo entre todas las asignaturas (escala a 140px).
+   * @param {number} tiempo - Horas dedicadas a la asignatura
+   * @returns {number} Altura en pixeles
+   */
   const alturaTiempo = (tiempo) => Math.round((tiempo / maxTiempo) * 140);
+
+  /**
+   * Calcula la altura en pixeles de la barra de nota (escala sobre 5.0 → 140px).
+   * @param {number} nota
+   * @returns {number} Altura en pixeles
+   */
   const alturaNota = (nota) => Math.round((nota / 5.0) * 140);
 
+  /**
+   * Devuelve la clase CSS de color segun el rango de la nota.
+   * Verde >= 4.0, amarillo >= 3.0, rojo < 3.0.
+   * @param {number} nota
+   * @returns {'nota-verde' | 'nota-amarillo' | 'nota-rojo'}
+   */
   const claseNota = (nota) => {
     if (nota >= 4.0) return 'nota-verde';
     if (nota >= 3.0) return 'nota-amarillo';
@@ -95,16 +124,27 @@ function Dashboard({ setPantalla, usuario, setUsuario }) {
     : '?';
   const semestreActivo = semestre || '2026-1';
 
+  /** Abre el modal de creacion de asignatura en modo "nueva". */
   const handleAbrirCrear = () => {
     setAsignaturaEditando(null);
     setModalAbierto(true);
   };
 
+  /**
+   * Abre el modal de asignatura en modo "edicion" con los datos de la asignatura seleccionada.
+   * @param {Object} asignatura - Asignatura a editar
+   */
   const handleAbrirEditar = (asignatura) => {
     setAsignaturaEditando(asignatura);
     setModalAbierto(true);
   };
 
+  /**
+   * Crea o actualiza una asignatura segun si hay una en modo edicion.
+   * Actualiza el estado local sin recargar el dashboard completo.
+   * @param {{ nombre: string, docente: string, semestre: string }} datos
+   * @returns {Promise<void>}
+   */
   const handleGuardar = async (datos) => {
     setLoadingModal(true);
     try {
@@ -155,6 +195,11 @@ function Dashboard({ setPantalla, usuario, setUsuario }) {
     }
   };
 
+  /**
+   * Pide confirmacion y elimina una asignatura, actualizando el estado local.
+   * @param {number} id - ID de la asignatura
+   * @returns {Promise<void>}
+   */
   const handleEliminar = async (id) => {
     if (!window.confirm('¿Seguro que deseas eliminar esta asignatura?')) return;
     try {
@@ -165,6 +210,10 @@ function Dashboard({ setPantalla, usuario, setUsuario }) {
     }
   };
 
+  /**
+   * Recarga los datos del dashboard desde la API y actualiza el estado de asignaturas y semestre.
+   * @returns {Promise<void>}
+   */
   const refreshDashboard = async () => {
     const token = localStorage.getItem('edu_token');
     const data = await apiFetchDashboard(token);
@@ -172,6 +221,11 @@ function Dashboard({ setPantalla, usuario, setUsuario }) {
     setSemestre(data.semestreActivo);
   };
 
+  /**
+   * Crea un nuevo semestre y refresca el dashboard al completar.
+   * @param {{ nombre: string, fecha_inicio: string, fecha_fin: string, activo: boolean }} datos
+   * @returns {Promise<void>}
+   */
   const handleCrearSemestre = async (datos) => {
     setLoadingModal(true);
     try {
@@ -185,6 +239,10 @@ function Dashboard({ setPantalla, usuario, setUsuario }) {
     }
   };
 
+  /**
+   * Abre el modal de hitos para la asignatura indicada.
+   * @param {Object} asignatura - Asignatura seleccionada
+   */
   const handleIrAPerfil = () => {
     setVista('perfil');
   };
@@ -202,6 +260,10 @@ function Dashboard({ setPantalla, usuario, setUsuario }) {
     setHitoModalAbierto(true);
   };
 
+  /**
+   * Callback invocado despues de guardar o eliminar un hito para sincronizar las estadisticas.
+   * @returns {Promise<void>}
+   */
   const handleHitoGuardado = async () => {
     await refreshDashboard();
   };

@@ -7,6 +7,17 @@ const INITIAL_FORM = {
   activo: true,
 };
 
+/**
+ * Modal para crear un nuevo semestre academico. Incluye validacion de fechas
+ * (fecha_fin debe ser posterior a fecha_inicio) y opcion de activarlo inmediatamente.
+ * @component
+ * @param {Object} props
+ * @param {boolean} props.isOpen - Controla la visibilidad del modal
+ * @param {function(): void} props.onClose - Callback para cerrar el modal
+ * @param {function(Object): void} props.onGuardar - Callback con los datos validados
+ * @param {boolean} props.loading - Muestra estado de carga en el boton de guardar
+ * @returns {JSX.Element | null}
+ */
 function NuevoSemestreModal({ isOpen, onClose, onGuardar, loading }) {
   const [form, setForm] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState({});
@@ -20,6 +31,10 @@ function NuevoSemestreModal({ isOpen, onClose, onGuardar, loading }) {
 
   if (!isOpen) return null;
 
+  /**
+   * Valida nombre, fechas y que fecha_fin sea posterior a fecha_inicio.
+   * @returns {boolean} true si el formulario es valido
+   */
   const validate = () => {
     const newErrors = {};
     if (!form.nombre.trim()) {
@@ -43,6 +58,10 @@ function NuevoSemestreModal({ isOpen, onClose, onGuardar, loading }) {
     return Object.keys(newErrors).length === 0;
   };
 
+  /**
+   * Actualiza el campo del formulario. Soporta inputs tipo text, date y checkbox.
+   * @param {React.ChangeEvent<HTMLInputElement>} e
+   */
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
@@ -54,6 +73,7 @@ function NuevoSemestreModal({ isOpen, onClose, onGuardar, loading }) {
     }
   };
 
+  /** Valida el formulario y, si es correcto, llama a `onGuardar` con los datos. */
   const handleGuardar = () => {
     if (!validate()) return;
     onGuardar({
@@ -64,6 +84,7 @@ function NuevoSemestreModal({ isOpen, onClose, onGuardar, loading }) {
     });
   };
 
+  /** Resetea el formulario y cierra el modal via `onClose`. */
   const handleCancel = () => {
     setForm(INITIAL_FORM);
     setErrors({});

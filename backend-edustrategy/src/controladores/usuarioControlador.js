@@ -70,6 +70,59 @@ export const subirFoto = [
   },
 ];
 
+/**
+ * @openapi
+ * /api/usuario/perfil:
+ *   get:
+ *     tags:
+ *       - Usuario
+ *     summary: Obtiene el perfil del usuario autenticado
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Perfil obtenido correctamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 mensaje:
+ *                   type: string
+ *                   example: Perfil obtenido
+ *                 usuario:
+ *                   type: object
+ *                   properties:
+ *                     nombre_completo:
+ *                       type: string
+ *                     carrera:
+ *                       type: string
+ *                     semestre_actual:
+ *                       type: integer
+ *                     email:
+ *                       type: string
+ *       401:
+ *         description: Token requerido o inválido
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               mensaje: Token requerido
+ *       404:
+ *         description: Usuario no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               mensaje: Usuario no encontrado
+ */
+/**
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 export const obtenerPerfil = async (req, res) => {
   try {
     const id = req.usuario.id_estudiante;
@@ -100,6 +153,64 @@ export const obtenerPerfil = async (req, res) => {
   }
 };
 
+/**
+ * @openapi
+ * /api/usuario/perfil:
+ *   put:
+ *     tags:
+ *       - Usuario
+ *     summary: Actualiza el perfil del usuario autenticado
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/ActualizarPerfilRequest'
+ *     responses:
+ *       200:
+ *         description: Perfil actualizado correctamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 mensaje:
+ *                   type: string
+ *                   example: Perfil actualizado correctamente
+ *                 usuario:
+ *                   $ref: '#/components/schemas/Usuario'
+ *       400:
+ *         description: Campos obligatorios faltantes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               mensaje: Nombre completo, carrera y semestre actual son obligatorios
+ *       401:
+ *         description: Token requerido o inválido
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               mensaje: Token requerido
+ *       404:
+ *         description: Usuario no encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               mensaje: Usuario no encontrado
+ */
+/**
+ * @param {import('express').Request} req - Body: { nombre_completo, carrera, semestre_actual }
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 export const actualizarPerfil = async (req, res) => {
   try {
     const id = req.usuario.id_estudiante;

@@ -46,6 +46,11 @@ import {
  *             example:
  *               mensaje: El correo ya está registrado
  */
+/**
+ * @param {import('express').Request} req - Body: campos de registro del estudiante
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
+ */
 export const registro = async (req, res) => {
   try {
     const usuario = await registrarUsuario(req.body);
@@ -115,6 +120,11 @@ export const registro = async (req, res) => {
  *               $ref: '#/components/schemas/Error'
  *             example:
  *               mensaje: Usuario bloqueado
+ */
+/**
+ * @param {import('express').Request} req - Body: { email, password }
+ * @param {import('express').Response} res
+ * @returns {Promise<void>}
  */
 export const login = async (req, res) => {
   try {
