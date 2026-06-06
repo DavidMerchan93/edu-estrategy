@@ -9,15 +9,19 @@ Push / PR
     │
     ▼
 GitHub Actions CI
-├── lint-frontend  ──┐
-└── lint-backend     ├─→ build-frontend
-                     │
-                     └─→ (si todo pasa) merge a main
-                                │
-                        ┌───────┴───────┐
-                        ▼               ▼
-                     Vercel          Railway / Render
-                   (frontend)          (backend)
+├── lint-frontend   ──┐
+├── lint-backend      │
+├── test-backend      ├─→ build-frontend ─┐
+├── test-frontend     │                   │
+└── test-e2e   ───────┴───────────────────┘  (depende de build-frontend y test-backend)
+                                                  │
+                                  (si todo pasa) ▼
+                                              merge a main
+                                                │
+                                        ┌───────┴───────┐
+                                        ▼               ▼
+                                     Vercel          Railway / Render
+                                   (frontend)          (backend)
 ```
 
 ---
@@ -69,11 +73,47 @@ Valida el estilo del código del backend. Corre en paralelo con `lint-frontend`.
 4. npm run lint  (ESLint con globals de Node.js)
 ```
 
+#### test-backend
+
+Ejecuta la suite de Jest del backend con reporte de cobertura. Falla si alguna de las cuatro metricas (lines, branches, functions, statements) cae por debajo de 85 %.
+
+```
+1. Checkout del código
+2. Setup Node.js 20 (cache npm)
+3. npm ci
+4. npm run test:coverage
+```
+
+#### test-frontend
+
+Ejecuta los tests de integracion del frontend (React Testing Library).
+
+```
+1. Checkout del código
+2. Setup Node.js 20 (cache npm)
+3. npm ci --legacy-peer-deps
+4. CI=true npm test -- --watchAll=false
+```
+
+#### test-e2e
+
+Ejecuta los tests end-to-end con Playwright sobre Chromium. Depende de `build-frontend` y `test-backend`. Las llamadas a la API se interceptan con `page.route(...)`; este job no requiere el backend en ejecucion.
+
+```
+1. Checkout del código
+2. Setup Node.js 20 (cache npm)
+3. npm ci --legacy-peer-deps (frontend)
+4. npm ci (raíz, instala @playwright/test)
+5. npx playwright install --with-deps chromium
+6. npx playwright test
+7. Si falla: sube playwright-report/ y test-results/ como artefactos
+```
+
 ### Resultado esperado
 
 - Todos los jobs deben pasar para que un PR sea mergeable a `main`.
-- Un fallo en `lint-frontend` bloquea también `build-frontend`.
-- `lint-backend` corre independientemente del frontend.
+- Un fallo en `lint-frontend` o `lint-backend` bloquea los jobs dependientes.
+- `test-e2e` solo corre si `build-frontend` y `test-backend` pasaron.
 
 ---
 
@@ -130,7 +170,8 @@ git commit -m "feat: descripción del cambio"
 git push origin feat/nueva-funcionalidad
 
 # 4. GitHub Actions corre CI automáticamente
-#    → lint-frontend, lint-backend, build-frontend
+#    → lint-frontend, lint-backend, build-frontend, test-backend,
+#      test-frontend, test-e2e
 
 # 5. Si todos los checks pasan → merge a main
 
