@@ -90,8 +90,15 @@ El sistema sigue un modelo **cliente-servidor** con las siguientes capas:
 |---|---|
 | Docker | Contenerizacion de backend + frontend + BD local |
 | Railway | Hosting del backend |
-| GitHub Actions | Integracion continua (lint + build) |
+| GitHub Actions | Integracion continua (lint + build + tests + E2E) |
 | Concurrently | Ejecucion simultanea de frontend y backend |
+
+### Testing
+| Tecnologia | Uso |
+|---|---|
+| Jest 29 + Supertest 7 | Tests unitarios y de integracion del backend (cobertura >= 85 %) |
+| React Testing Library 16 | Tests de integracion del frontend |
+| Playwright | Tests end-to-end (E2E) en Chromium |
 
 ---
 
@@ -243,6 +250,41 @@ edu-estrategy/
 
 ---
 
+## Tests
+
+El proyecto incluye tres capas de pruebas automatizadas.
+
+### Backend (Jest + Supertest, 149 tests)
+
+```bash
+cd backend-edustrategy
+npm test              # ejecucion normal
+npm run test:coverage # con reporte de cobertura (umbral 85 %)
+```
+
+### Frontend (React Testing Library, 19 tests)
+
+```bash
+cd frontend
+npm test                            # modo watch
+CI=true npm test -- --watchAll=false # corrida unica
+```
+
+### End-to-end (Playwright, 4 tests)
+
+```bash
+npx playwright install chromium     # solo la primera vez
+npm run test:e2e                    # ejecucion headless
+npm run test:e2e:headed             # con navegador visible
+npm run test:e2e:report             # abre el reporte HTML
+```
+
+Cobertura actual del backend: **96.81 %** statements, **95.71 %** branches, **95.45 %** functions, **97.10 %** lines.
+
+Para mas detalles, consulta [docs/testing.md](docs/testing.md).
+
+---
+
 ## Documentacion adicional
 
 | Archivo | Contenido |
@@ -250,6 +292,7 @@ edu-estrategy/
 | [docs/descripcion-proyecto.md](docs/descripcion-proyecto.md) | Descripcion detallada del proyecto |
 | [docs/api.md](docs/api.md) | Referencia de endpoints de la API |
 | [docs/base-de-datos.md](docs/base-de-datos.md) | Esquema de la base de datos |
+| [docs/testing.md](docs/testing.md) | Guia completa de tests (backend, frontend, E2E) |
 | [docs/ci-cd.md](docs/ci-cd.md) | Pipeline de integracion y despliegue continuo |
 | [docs/docker.md](docs/docker.md) | Documentacion de Docker y docker-compose |
 

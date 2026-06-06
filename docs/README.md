@@ -9,6 +9,7 @@ EDU-STRATEGY es una aplicación web de autogestión académica que centraliza y 
 | [api.md](api.md) | Referencia completa de endpoints del backend |
 | [base-de-datos.md](base-de-datos.md) | Esquema de la base de datos y relaciones |
 | [ci-cd.md](ci-cd.md) | Pipeline de integración y despliegue continuo |
+| [testing.md](testing.md) | Guia de tests (backend, frontend, E2E) |
 
 ---
 
