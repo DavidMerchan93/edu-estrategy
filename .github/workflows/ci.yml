@@ -71,3 +71,23 @@ jobs:
       - name: ESLint
         run: npm run lint
         working-directory: backend-edustrategy
+
+  test-backend:
+    name: Tests Backend (coverage >= 85%)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend-edustrategy/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: backend-edustrategy
+
+      - name: Run tests with coverage
+        run: npm run test:coverage
+        working-directory: backend-edustrategy
